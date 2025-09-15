@@ -22,7 +22,7 @@ body {
 
 #root {
   width: 100%;
-  max-width: 450px;
+  max-width: 450px; /* 모바일 기준 최대 폭 */
   height: 100%;
   background-color: var(--background);
 }
