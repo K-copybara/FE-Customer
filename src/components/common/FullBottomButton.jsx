@@ -42,10 +42,6 @@ const Button = styled.button`
   height: 3rem;
   background: var(--primary, #190eaa);
   color: #fff;
-  font-family: "Pretendard Variable";
-  line-height: 140%;
-  font-weight: 600;
-  font-style: normal;
   border: none;
   border-radius: 0.625rem;
   cursor: pointer;

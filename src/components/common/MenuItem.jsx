@@ -49,25 +49,19 @@ const Info = styled.div`
 `;
 
 const Name = styled.p`
-  font-family: Pretendard;
   ${display_medium}
-  font-weight: 600;
   color: var(--black);
   margin: 0 0 0.25rem 0;
 `;
 
 const Desc = styled.p`
-  font-family: Pretendard;
   ${display_small}
   color: var(--gray700);
   margin: 0;
-  line-height: 1.4;
 `;
 
 const Price = styled.p`
-  font-family: Pretendard;
   ${display_medium}
-  font-weight: 700;
   color: var(--black);
   margin: 0.5rem 0 0 0;
 `;

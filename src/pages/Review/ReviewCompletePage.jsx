@@ -69,18 +69,11 @@ const Title = styled.h1`
   ${display_large}
   color: var(--Black, #222);
 
-  font-family: "Pretendard Variable";
-  font-style: normal;
-  font-weight: 700;
-  line-height: 140%; /* 2.1rem */
   marin-bottom: 0.5rem;
 `;
 
 const OrderNumber = styled.div`
   ${display_medium}
-  font-style: normal;
-  font-weight: 600;
-  line-height: 140%; /* 1.75rem */
   color: var(--primary);
   text-align: center;
   margin-bottom: 5rem;

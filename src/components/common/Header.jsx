@@ -134,7 +134,6 @@ const StoreColumn = styled.div`
 
 const TableText = styled.div`
   color: var(--gray500);
-  font-family: Pretendard Variable;
   ${body_large};
 `;
 
@@ -146,7 +145,6 @@ const MainInfoRow = styled.div`
 
 const StoreTitle = styled.div`
   color: var(--black);
-  font-family: Pretendard Variable;
   ${display_large};
 `;
 
@@ -160,7 +158,6 @@ const LangButton = styled.button`
   padding: 0 0.5rem 0 0;
   display: flex;
   align-items: center;
-  font-family: Pretendard Variable;
   color: var(--black);
   cursor: pointer;
   ${body_medium};
@@ -197,7 +194,6 @@ const LangDropdownItem = styled.li`
   padding: 0.375rem 1.125rem;
   color: ${({ $selected }) => ($selected ? "var(--secondary)" : "var(--black)")};
   background: ${({ $selected }) => ($selected ? "var(--gray100)" : "var(--background)")};
-  font-family: Pretendard Variable;
   cursor: pointer;
   ${body_medium};
 
@@ -210,7 +206,6 @@ const OrderBtn = styled.button`
   background: var(--background);
   border: 1.5px solid var(--secondary);
   color: var(--black);
-  font-family: Pretendard Variable;
   border-radius: 0.625rem;
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
@@ -238,8 +233,6 @@ const BellIcon = styled.span`
 `;
 
 const NoticeText = styled.div`
-  font-family: Pretendard Variable;
   color: var(--black);
   ${display_small};
-  line-height: 1.3125rem;
 `;

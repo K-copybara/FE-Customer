@@ -111,19 +111,11 @@ const SendIcon = styled.div`
 const Title = styled.h1`
   ${display_large}
   color: var(--Black, #222);
-
-  font-family: "Pretendard Variable";
-  font-style: normal;
-  font-weight: 700;
-  line-height: 140%; /* 2.1rem */
   marin-bottom: 0.5rem;
 `;
 
 const OrderNumber = styled.div`
   ${display_medium}
-  font-style: normal;
-  font-weight: 600;
-  line-height: 140%; /* 1.75rem */
   color: var(--primary);
   text-align: center;
   margin-bottom: 2rem;
@@ -162,20 +154,12 @@ const SummaryRow = styled.div`
 
 const ItemName = styled.div`
   ${body_large}
-  font-weight: 400;
-  font-family: "Pretendard Variable";
   color: var(--black);
-  font-style: normal;
-  line-height: 140%
 `;
 
 const ItemQuantity = styled.div`
   ${body_large}
   color: var(--black);
-  font-style: normal;
-  font-weight: 600;
-  line-height: normal;
-  font-family: "Pretendard Variable";
 `;
 
 const Line = styled.div`
@@ -195,20 +179,11 @@ const TotalRow = styled.div`
 const SummaryLabel = styled.span`
   ${body_large}
   color: var(--black);
-  font-family: "Pretendard Variable";
-  font-style: normal;
-  font-weight: 400;
-  line-height: 140%; /* 1.4rem */
 `;
 
 const SummaryValue = styled.span`
   ${body_large}
   color: var(--black);
-  font-family: "Pretendard Variable";
-  font-style: normal;
-  font-weight: 600;
-  line-height: normal;
-
 `;
 
 const RequestInfo = styled.div`
@@ -219,20 +194,12 @@ const RequestInfo = styled.div`
 const RequestTitle = styled.div`
   ${body_large}
   color: var(--black);
-  font-family: "Pretendard Variable";
-  font-style: normal;
-  font-weight: 600;
-  line-height: normal;
   margin-bottom: 0.5rem;
 `;
 
 const RequestContent = styled.div`
   ${body_large}
   color: var(--black);
-  font-family: "Pretendard Variable";
-  font-style: normal;
-  font-weight: 400;
-  line-height: 140%; /* 1.4rem */
 `;
 
 const ErrorMessage = styled.div`

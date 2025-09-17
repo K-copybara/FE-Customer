@@ -88,14 +88,14 @@ const CartPage = () => {
                             onClick={() => handleQuantityChange(item.cartItemId, -1)}
                             disabled={item.quantity <= 1}
                           >
-                            <svg width="15" height="15" viewBox="0 0 20 20" fill="none">
-                              <path d="..." fill="#717171"/>
+                            <svg width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M3.33333 10.8333C2.98611 10.8333 2.74306 10.6944 2.60417 10.4167C2.47917 10.1389 2.47917 9.86111 2.60417 9.58333C2.74306 9.30556 2.98611 9.16667 3.33333 9.16667H16.6667C17.0139 9.16667 17.25 9.30556 17.375 9.58333C17.5139 9.86111 17.5139 10.1389 17.375 10.4167C17.25 10.6944 17.0139 10.8333 16.6667 10.8333H3.33333Z" fill="#717171"/>
                             </svg>
                           </QuantityButton>
                           <QuantityDisplay>{item.quantity}</QuantityDisplay>
                           <QuantityButton onClick={() => handleQuantityChange(item.cartItemId, 1)}>
-                            <svg width="15" height="15" viewBox="0 0 20 20" fill="none">
-                              <path d="..." fill="#717171"/>
+                            <svg width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M3.33333 10.8333C2.98611 10.8333 2.74306 10.6944 2.60417 10.4167C2.47917 10.1389 2.47917 9.86111 2.60417 9.58333C2.74306 9.30556 2.98611 9.16667 3.33333 9.16667H16.6667C17.0139 9.16667 17.25 9.30556 17.375 9.58333C17.5139 9.86111 17.5139 10.1389 17.375 10.4167C17.25 10.6944 17.0139 10.8333 16.6667 10.8333H3.33333ZM9.16667 3.33333C9.16667 2.98611 9.30556 2.75 9.58333 2.625C9.86111 2.48611 10.1389 2.48611 10.4167 2.625C10.6944 2.75 10.8333 2.98611 10.8333 3.33333V16.6667C10.8333 17.0139 10.6944 17.2569 10.4167 17.3958C10.1389 17.5208 9.86111 17.5208 9.58333 17.3958C9.30556 17.2569 9.16667 17.0139 9.16667 16.6667V3.33333Z" fill="#717171"/>
                             </svg>
                           </QuantityButton>
                         </QuantityControls>
@@ -160,15 +160,6 @@ const CartPage = () => {
 
 export default CartPage;
 
-// 기존 스타일 + 빈 장바구니 스타일 추가
-const EmptyCart = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-`;
 
 const EmptyCartContent = styled.div`
   flex: 1;
@@ -185,7 +176,6 @@ const EmptyMessage = styled.p`
   color: var(--gray600);
   margin: 0;
   text-align: center;
-  font-weight: 500;
 `;
 
 const EmptyButton = styled.button`
@@ -194,9 +184,7 @@ const EmptyButton = styled.button`
   border: none;
   border-radius: 0.625rem;
   padding: 0.875rem 2rem;
-  font-family: "Pretendard Variable";
   ${body_large}
-  font-weight: 600;
   cursor: pointer;
   
   &:hover {
@@ -238,13 +226,10 @@ const StoreTitle = styled.h2`
 const OrderCount = styled.div`
   ${body_large}
   color: var(--black);
-  font-family: 'Pretendard Variable';
 `;
 const TableInfo = styled.span`
   ${display_small}
   color: var(--black);
-  font-weight: 400;
-  line-height: 150%;
 `;
 
 const CartItems = styled.div`
@@ -287,14 +272,12 @@ const ItemInfo = styled.div`
 
 const ItemName = styled.div`
   ${display_medium}
-  font-weight: 600;
   color: var(--black);
 `;
 
 const ItemPrice = styled.div`
   ${body_large}
   color: var(--black);
-  font-weight: 600;
 `;
 
 const QuantityControls = styled.div`
@@ -319,10 +302,6 @@ const QuantityButton = styled.button`
   padding: 0; /* 기본 패딩 제거 */
   margin: 0; /* 기본 마진 제거 */
   color: var(--Gray700, #717171);
-  font-family: "Min Icon VF";
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
 
   display: flex;
   flex-direction: column;
@@ -338,9 +317,7 @@ const PriceQuantitySection = styled.div`
 `;
 const QuantityDisplay = styled.span`
   ${body_large}
-  font-weight: 600;
   color: var(--black);
-  font-family: "Pretendard Variable";
 `;
 
 const RemoveButton = styled.button`
@@ -366,7 +343,6 @@ const RequestButton = styled.button`
   display: flex;
   padding: 0.625rem 7.3125rem;
   border: 1px solid var(--secondary);
-  font-family: "Pretendard Variable";
   border-radius: 0.625rem;
   background: var(--background);
   color: var(--primary, #190EAA);
@@ -439,7 +415,6 @@ const ModalHeader = styled.div`
 
 const ModalTitle = styled.h3`
   ${display_medium}
-  font-weight: 600;
   color: var(--black);
   margin: 0;
 `;
@@ -452,7 +427,6 @@ const TextArea = styled.textarea`
   border-radius: 0.625rem;
   align-items: center;
 
-  font-family: "Pretendard Variable";
   ${body_large}
   resize: none;
   outline: none;

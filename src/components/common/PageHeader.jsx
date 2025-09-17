@@ -50,7 +50,6 @@ const BackButton = styled.button`
 
 const HeaderTitle = styled.h1`
   ${display_medium}
-  font-weight: 600;
   color: var(--black);
   text-align: center;
   margin: 0;

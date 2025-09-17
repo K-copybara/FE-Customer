@@ -187,7 +187,6 @@ const CategorySection = styled.section`
 
 const CategoryTitle = styled.h2`
   ${display_medium}
-  font-family: Pretendart Varidable;
   flex: 1 0 0;
   color: var(--black);
   margin: 0.25rem 0  0;
@@ -210,13 +209,10 @@ const AIButton = styled.button`
   background: var(--Primary, #190EAA);
   box-shadow: 0 4px 10px 0 rgba(31, 18, 212, 0.15);
   color: var(--white);
-  font-family: Pretendard Variable;
-  font-weight: 600;
   cursor: pointer;
   position: absolute;
   bottom: 1.25rem;
   right: 1rem;
-  line-height: 140%;
 
   svg {
     display: flex;

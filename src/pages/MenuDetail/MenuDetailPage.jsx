@@ -130,7 +130,6 @@ const BackButton = styled.button`
 
 const HeaderTitle = styled.h1`
   ${body_large}
-  font-weight: 600;
   color: var(--black);
 `;
 
@@ -166,7 +165,6 @@ const MenuInfoSection = styled.div`
 
 const MenuName = styled.h2`
   ${display_large}
-  font-family: 'Pretendard Variable';
   color: var(--black);
   margin: 0;
 `;
@@ -174,15 +172,11 @@ const MenuName = styled.h2`
 const MenuDescription = styled.p`
   ${display_medium}
   color: var(--gray700);
-  line-height: 140%;
-  font-family: 'Pretendard Variable';
 `;
 
 const MenuPrice = styled.div`
   ${display_large}
-  font-weight: 700;
   color: var(--black);
-  font-family: 'Pretendard Variable';
 `;
 
 const PriceQuantitySection = styled.div`
@@ -214,10 +208,6 @@ const QuantityButton = styled.button`
   padding: 0; /* 기본 패딩 제거 */
   margin: 0; /* 기본 마진 제거 */
   color: var(--Gray700, #717171);
-  font-family: "Min Icon VF";
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
 
   display: flex;
   flex-direction: column;
@@ -228,9 +218,4 @@ const QuantityButton = styled.button`
 const QuantityDisplay = styled.span`
   ${display_large}
   color: var(--Black, #222);
-  font-family: "Pretendard Variable";
-  font-size: 1.5rem;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 140%; 
 `;

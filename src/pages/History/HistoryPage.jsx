@@ -118,20 +118,11 @@ const StoreInfo = styled.div`
 const StoreTitle = styled.h2`
   ${display_medium}
   color: var(--black);
-  font-family: "Pretendard Variable";
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-
 `;
 
 const TableInfo = styled.span`
   ${display_small}
   color: var(--black);
-  font-family: "Pretendard Variable";
-  font-style: normal;
-  font-weight: 400;
-  line-height: 150%; /* 1.3125rem */
 `;
 
 const TotalOrderInfo = styled.div`
@@ -148,21 +139,12 @@ const TotalOrderInfo = styled.div`
 
 const TotalOrderText = styled.div`
   ${display_medium}
-  font-family: "Pretendard Variable";
-  font-style: normal;
-  font-weight: 600;
-  line-height: 140%; /* 1.75rem */
-
   color: var(--black);
 `;
 
 const TotalOrderAmountText = styled.div`
   ${display_medium}
-  font-style: normal;
-  font-weight: 600;
-  line-height: 140%; /* 1.75rem */
   color: var(--black);
-  font-family: "Pretendard Variable";
 `;
 
 const EmptyOrder = styled.div`
@@ -206,20 +188,12 @@ const OrderHeader = styled.div`
 
 const OrderStatus = styled.div`
   ${body_large}
-  font-weight: 600;
   color: var(--primary);
-  font-weight: 600;
-  line-height: normal;
-  font-family: "Pretendard Variable";
 `;
 
 const OrderTime = styled.div`
   ${body_large}
   color: var(--gray700);
-  font-family: "Pretendard Variable";
-  font-style: normal;
-  font-weight: 400;
-  line-height: 140%; /* 1.4rem */
 `;
 
 const OrderItemInfo = styled.div`
@@ -233,12 +207,7 @@ const OrderNumberText = styled.div`
   ${display_medium}
   border-bottom: 1px solid var(--gray300);
   padding-bottom: 1.25rem;
-  font-weight: 600;
   color: var(--black);
-  font-style: normal;
-  font-weight: 600;
-  line-height: 140%; /* 1.75rem */
-  font-family: "Pretendard Variable";
 `;
 
 const OrderItem = styled.div`
@@ -252,33 +221,20 @@ const OrderItem = styled.div`
 const ItemName = styled.div`
   ${body_large}
   color: var(--black);
-  font-style: normal;
-  font-weight: 400;
-  line-height: 140%; /* 1.4rem */
-  font-family: "Pretendard Variable";
 `;
 
 const ItemPrice = styled.div`
   ${body_large}
-  font-weight: 600;
   color: var(--black);
-  font-style: normal;
-  font-weight: 400;
-  line-height: 140%; /* 1.4rem */
-  font-family: "Pretendard Variable";
 `;
 
 const TotalAmount = styled.div`
   ${body_large}
   padding: 1rem 0 1.25rem 0;
-  font-weight: 600;
   color: var(--black);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-style: normal;
-  font-weight: 600;
-  line-height: normal;
   border-bottom: 1px solid var(--gray300);
 `;
 
@@ -289,21 +245,12 @@ const RequestSection = styled.div`
 
 const RequestLabel = styled.div`
   ${body_large}
-  font-family: "Pretendard Variable";
-  font-style: normal;
-  font-weight: 600;
-  line-height: normal;
   margin-bottom: 0.75rem;
 `;
 
 const RequestContent = styled.div`
   ${body_large}
   color: var(--Black, #222);
-  /* Body/Large */
-  font-family: "Pretendard Variable";
-  font-style: normal;
-  font-weight: 400;
-  line-height: 140%; /* 1.4rem */
 `;
 
 const ReviewButton = styled.button`
@@ -321,10 +268,6 @@ const ReviewButton = styled.button`
   align-self: flex-end;
   text-align: rlex-end;
   ${body_large}
-  font-family: "Pretendard Variable";
-  font-style: normal;
-  font-weight: 600;
-  line-height: normal;
   cursor: pointer;
   
   &:hover {

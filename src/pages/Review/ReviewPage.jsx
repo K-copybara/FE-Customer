@@ -94,7 +94,6 @@ const OrderNumberText = styled.div`
   ${display_medium}
   text-align: center;
   color: var(--black);
-  font-weight: 600;
   padding: 1.5rem;
   margin-bottom: 1rem;
 `;
