@@ -140,7 +140,7 @@ const MenuPage = () => {
           ))}
         </MainContent>
       </ScrollableContent>
-      <AIButton onClick={handleAIChat}>
+      <AIButton onClick={handleAIChat} isCartVisible={cartItems.length > 0}>
         AI 챗봇
         <svg
           width="24"
@@ -229,7 +229,8 @@ const AIButton = styled.button`
   color: var(--white);
   cursor: pointer;
   position: absolute;
-  bottom: 1.25rem;
+  bottom: ${(props) => (props.isCartVisible ? '5.75rem' : '1.25rem')};
+  transition: bottom 0.3s ease-in-out;
   right: 1rem;
 
   svg {
