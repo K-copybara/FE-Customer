@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { display_medium, display_large} from '../../styles/font';
+import { display_medium, display_large } from '../../styles/font';
 import FullBottomButton from '../../components/common/FullBottomButton';
 import StarRating from '../../components/common/StarRating';
 import PageHeader from '../../components/common/PageHeader';
@@ -12,17 +12,15 @@ const ReviewPage = () => {
   const location = useLocation();
   const order = location.state;
 
-  console.log("ReviewPage에 전달된 주문 정보:", order);
-
   const [ratings, setRatings] = useState({});
 
   // order 객체가 유효한지 확인합니다.
-  if (!order || !order.orderNumber || !order.items) {
+  if (!order || !order.orderId || !order.items) {
     return <div>잘못된 접근입니다.</div>;
   }
 
   const handleRatingChange = (itemId, rating) => {
-    setRatings(prevRatings => ({
+    setRatings((prevRatings) => ({
       ...prevRatings,
       [itemId]: rating,
     }));
@@ -30,44 +28,42 @@ const ReviewPage = () => {
 
   const handleCompleteClick = () => {
     // 여기서 리뷰 데이터를 저장하는 로직을 호출합니다.
-    console.log("리뷰 제출:", ratings);
-    
+    console.log('리뷰 제출:', ratings);
+
     // 리뷰 완료 페이지로 이동
-    navigate('/reviewcomplete', { state: { orderNumber: order.orderNumber } });
+    navigate('/reviewcomplete', { state: { orderId: order.orderId } });
   };
 
   return (
     <Container>
-      <PageHeader 
-        title="리뷰 쓰기" 
-        onClick={() => navigate(-1)} 
+      <PageHeader
+        title="리뷰 쓰기"
+        onClick={() => navigate(-1)}
         showBackButton={true}
       />
 
       <Content>
-        <OrderNumberText>주문 번호 {order.orderNumber}</OrderNumberText>
+        <OrderNumberText>주문 번호 {order.orderId}</OrderNumberText>
         <ReviewItems>
-          {order.items.map(item => (
-            <ReviewItem key={item.cartItemId}>
+          {order.items.map((item) => (
+            <ReviewItem key={item.menuId}>
               <ImageNameConatainer>
-                <ItemImage src={item.imgUrl} alt={item.name} />
-                <ItemName>{item.name}</ItemName>
+                <ItemName>{item.menuName}</ItemName>
               </ImageNameConatainer>
               <StarDetails>
-              
-                <StarRating 
-                  rating={ratings[item.cartItemId] || 0}
-                  onRatingChange={(rating) => handleRatingChange(item.cartItemId, rating)} 
+                <StarRating
+                  rating={ratings[item.menuId] || 0}
+                  onRatingChange={(rating) =>
+                    handleRatingChange(item.menuId, rating)
+                  }
                 />
               </StarDetails>
             </ReviewItem>
           ))}
         </ReviewItems>
       </Content>
-      
-      <FullBottomButton onClick={handleCompleteClick}>
-        완료
-      </FullBottomButton>
+
+      <FullBottomButton onClick={handleCompleteClick}>완료</FullBottomButton>
     </Container>
   );
 };

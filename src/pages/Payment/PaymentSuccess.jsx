@@ -2,25 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { display_medium, body_large, body_medium } from '../../styles/font';
-import { useCart } from '../../hooks/useCart';
 import FullBottomButton from '../../components/common/FullBottomButton';
+import { useCartStore } from '../../store/useCartStore';
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { clearCart, completeOrder } = useCart();
-  
+  const { clearCart } = useCartStore();
+
   const [isProcessing, setIsProcessing] = useState(true);
   const [orderInfo, setOrderInfo] = useState(null);
   const [error, setError] = useState(null);
 
-  const paymentKey = searchParams.get("paymentKey");
-  const orderId = searchParams.get("orderId");
-  const amount = searchParams.get("amount");
+  const paymentKey = searchParams.get('paymentKey');
+  const orderId = searchParams.get('orderId');
+  const amount = searchParams.get('amount');
 
   useEffect(() => {
     console.log('PaymentSuccess 페이지 로드:', { paymentKey, orderId, amount });
-    
+
     if (paymentKey && orderId && amount) {
       // 1초 후 결제 승인 요청
       setTimeout(() => {
@@ -38,31 +38,34 @@ const PaymentSuccess = () => {
       console.log('결제 승인 시작:', { paymentKey, orderId, amount });
 
       // 세민이한테 paymentKey, orderId, amount 보내기, 결제승인 api 호출
-      const response = await fetch('https://localhost:8080/v1/payments/confirm', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        'https://localhost:8080/v1/payments/confirm',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            paymentKey,
+            orderId,
+            amount: Number(amount),
+          }),
         },
-        body: JSON.stringify({
-          paymentKey,
-          orderId,
-          amount: Number(amount)
-        })
-      });
+      );
 
       const result = await response.json();
       console.log('백엔드 응답:', result);
-      
+
       if (response.ok) {
         console.log('✅ 결제 승인 완료!', result);
-        
+
         // localStorage에서 주문 정보 가져오기
         const pendingOrderData = localStorage.getItem('pendingOrder');
-        
+
         if (pendingOrderData) {
           try {
             const orderData = JSON.parse(pendingOrderData);
-            
+
             // 완료된 주문 정보 생성
             const completedOrderData = {
               ...orderData,
@@ -72,16 +75,15 @@ const PaymentSuccess = () => {
               paymentStatus: 'completed',
               paymentData: result,
               message: result.message, // ✅ "결제 성공"
-              completedAt: new Date().toISOString()
+              completedAt: new Date().toISOString(),
             };
 
             // Context의 주문 완료 처리
-            const completedOrder = completeOrder(completedOrderData);
-            setOrderInfo(completedOrder);
-            
+            setOrderInfo(completedOrderData);
+
             // 장바구니 비우기
             clearCart();
-            
+
             // localStorage 정리
             localStorage.removeItem('pendingOrder');
           } catch (parseError) {
@@ -143,7 +145,7 @@ const PaymentSuccess = () => {
       <SuccessContent>
         <SuccessIcon>✅</SuccessIcon>
         <SuccessTitle>결제가 완료되었습니다!</SuccessTitle>
-        
+
         <InfoSection>
           <InfoItem>
             <InfoLabel>주문번호</InfoLabel>
@@ -157,7 +159,9 @@ const PaymentSuccess = () => {
           {orderInfo?.chargedAmount && (
             <InfoItem>
               <InfoLabel>실제 결제금액</InfoLabel>
-              <InfoValue>{orderInfo.chargedAmount.toLocaleString()}원</InfoValue>
+              <InfoValue>
+                {orderInfo.chargedAmount.toLocaleString()}원
+              </InfoValue>
             </InfoItem>
           )}
           {orderInfo?.message && (
@@ -219,8 +223,12 @@ const LoadingSpinner = styled.div`
   margin: 0 auto 2rem;
 
   @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 `;
 
@@ -295,7 +303,7 @@ const SecondaryButton = styled.button`
   padding: 1rem;
   ${body_large}
   cursor: pointer;
-  
+
   &:hover {
     background: var(--gray50);
   }
