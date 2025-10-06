@@ -52,27 +52,26 @@ export const CartProvider = ({ children }) => {
         imgUrl: menu.imgUrl,
         quantity: quantity,
         totalPrice: menu.price * quantity,
-        cartItemId: `${menu.id}-${Date.now()}`
       };
 
       return [...prev, cartItem];
     });
   };
 
-  const updateQuantity = (cartItemId, newQuantity) => {
+  const updateQuantity = (id, newQuantity) => {
     if (newQuantity < 1) return;
     
     setCartItems(prev => 
       prev.map(item => 
-        item.cartItemId === cartItemId 
+        item.id === id 
           ? { ...item, quantity: newQuantity, totalPrice: item.price * newQuantity }
           : item
       )
     );
   };
 
-  const removeFromCart = (cartItemId) => {
-    setCartItems(prev => prev.filter(item => item.cartItemId !== cartItemId));
+  const removeFromCart = (id) => {
+    setCartItems(prev => prev.filter(item => item.id !== id));
   };
 
   const clearCart = () => {

@@ -6,8 +6,9 @@ import mandooSvg from '../assets/mandoo.svg';
 export const StoreProvider = ({ children }) => {
   // 가게 정보
   const storeInfo = {
+    storeId: 1,
     storeName: "딤딤섬 명동점",
-    tableNumber: "12번 테이블",
+    tableNumber: 12,
     noticeText: (
       <>
         음식은 무제한 이용 가능합니다.
@@ -24,7 +25,7 @@ export const StoreProvider = ({ children }) => {
         id: 1,
         name: "신메뉴 딤섬",
         description: "새로 출시된 특별한 딤섬",
-        price: 9000,
+        price: 100,
         imgUrl: mandooSvg
       }
     ],

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { display_medium, body_large, body_medium, body_small, display_small } from '../../styles/font';
@@ -9,21 +9,22 @@ import { useStore } from '../../hooks/useStore';
 
 const CartPage = () => {
   const navigate = useNavigate();
-  const { cartItems, updateQuantity, removeFromCart, clearCart, totalPrice, completeOrder } = useCart(); // 추가
+  const { cartItems, updateQuantity, removeFromCart, totalPrice } = useCart();
   const { storeInfo } = useStore(); 
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [requestText, setRequestText] = useState('');
   const [tempRequestText, setTempRequestText] = useState('');
-
-  const handleQuantityChange = (cartItemId, change) => {
-    const item = cartItems.find(item => item.cartItemId === cartItemId);
+  
+  // 결제위젯 관련 state
+  const handleQuantityChange = (id, change) => {
+    const item = cartItems.find(item => item.id === id);
     if (item) {
-      updateQuantity(cartItemId, item.quantity + change); // 수정된 부분
+      updateQuantity(id, item.quantity + change);
     }
   };
 
-  const handleRemoveItem = (cartItemId) => {
-    removeFromCart(cartItemId); // 수정된 부분
+  const handleRemoveItem = (id) => {
+    removeFromCart(id);
   };
 
   const handleRequestComplete = () => {
@@ -36,56 +37,132 @@ const CartPage = () => {
     setShowRequestModal(true);
   };
 
-  const handleOrder = () => {
+  // ✅ 결제창 방식으로 결제 요청
+ const handlePayment = async () => {
+  try {
+    console.log('결제 준비 API 호출 시작');
+    
+    // ✅ 간단한 요청 body (3개 값만)
+    const requestBody = {
+      cartId: "cart_" + Date.now(), // 또는 실제 cartId 값
+      storeId: storeInfo?.storeId || "store_123", 
+      tableId: storeInfo?.tableNumber || "table_1" // tableNumber를 tableId로 사용
+    };
+
+    console.log('결제 준비 요청:', requestBody);
+
+    // ✅ 백엔드 결제 준비 API 호출
+    const prepareResponse = await fetch('http://localhost:8080/v1/payments/prepare', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody)
+    });
+
+    if (!prepareResponse.ok) {
+      throw new Error('결제 준비 실패');
+    }
+
+    const { clientKey, orderId, customerKey } = await prepareResponse.json();
+    console.log('결제 준비 완료:', { clientKey, orderId, customerKey });
+
+    // localStorage에 주문 정보 저장 (기존 방식 유지)
     const orderData = {
-      items: cartItems,
+      items: cartItems.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        imgUrl: item.imgUrl
+      })),
       totalPrice: totalPrice,
       request: requestText || '없음',
-      orderNumber: Math.floor(Math.random() * 100) + 1 // 랜덤 주문번호
+      orderId,
+      customerKey,
+      storeInfo: {
+        storeName: storeInfo?.storeName || '',
+        tableNumber: storeInfo?.tableNumber || '',
+        storeId: storeInfo?.storeId || ''
+      },
+      timestamp: new Date().toISOString()
     };
-    // Context의 completeOrder 사용
-    const completedOrder = completeOrder(orderData);
-    clearCart(); // 수정된 부분
-    navigate('/ordercomplete', { state: completedOrder});
-  };
+    
+    localStorage.setItem('pendingOrder', JSON.stringify(orderData));
+
+    // 토스 결제창 호출 (백엔드에서 받은 키 사용)
+    if (typeof window.TossPayments === 'undefined') {
+      alert('결제 시스템이 로딩되지 않았습니다. 페이지를 새로고침해주세요.');
+      return;
+    }
+
+    const tossPayments = window.TossPayments(clientKey);
+    const payment = tossPayments.payment({ customerKey: customerKey });
+
+    await payment.requestPayment({
+      method: 'CARD',
+      amount: {
+        currency: 'KRW',
+        value: totalPrice,
+      },
+      orderId: orderId, // 백엔드에서 받은 orderId
+      orderName: `${storeInfo.storeName} 주문 (${cartItems.length}건)`,
+      customerName: '고객',
+      customerEmail: 'customer@example.com',
+      card: {
+        useEscrow: false,
+        flowMode: 'DEFAULT',
+        useCardPoint: false,
+        useAppCardOnly: false,
+      },
+      successUrl: `${window.location.origin}/payment/success`,
+      failUrl: `${window.location.origin}/payment/fail`,
+    });
+
+  } catch (error) {
+    console.error('결제 요청 실패:', error);
+    if (error.code === 'USER_CANCEL') {
+      console.log('사용자가 결제를 취소했습니다.');
+    } else {
+      alert('결제 요청 중 오류가 발생했습니다: ' + error.message);
+    }
+  }
+};
 
   return (
     <Container>
       <PageHeader 
         title="장바구니" 
-        onBackClick={() => navigate('/')} // onClick → onBackClick으로 수정
+        onClick={() => navigate('/')}
       />
 
       <Content>
         <StoreInfo>
           <StoreTitle>{storeInfo.storeName}</StoreTitle>
-          <TableInfo>{storeInfo.tableNumber}</TableInfo>
+          <TableInfo>{storeInfo.tableNumber}번 테이블</TableInfo>
         </StoreInfo>
 
         {cartItems.length === 0 ? (
-          // 장바구니가 비어있을 때 표시
           <EmptyCartContent>
             <EmptyMessage>메뉴를 담아주세요</EmptyMessage>
             <EmptyButton onClick={() => navigate('/')}>메뉴 보러가기</EmptyButton>
           </EmptyCartContent>
         ) : (
-          // 장바구니에 아이템이 있을 때 표시
           <>
             <OrderCount>총 {cartItems.length}건</OrderCount>
 
             <CartItems>
               {cartItems.map((item) => (
-                <CartItem key={item.cartItemId}>
+                <CartItem key={item.id}>
                   <ItemRow>
                     <ItemImage src={item.imgUrl} alt={item.name} />
                     <ItemInfo>
                       <ItemName>{item.name}</ItemName>
-                      
                       <PriceQuantitySection>
                         <ItemPrice>{item.price.toLocaleString()}원</ItemPrice>
                         <QuantityControls>
                           <QuantityButton 
-                            onClick={() => handleQuantityChange(item.cartItemId, -1)}
+                            onClick={() => handleQuantityChange(item.id, -1)}
                             disabled={item.quantity <= 1}
                           >
                             <svg width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -93,7 +170,7 @@ const CartPage = () => {
                             </svg>
                           </QuantityButton>
                           <QuantityDisplay>{item.quantity}</QuantityDisplay>
-                          <QuantityButton onClick={() => handleQuantityChange(item.cartItemId, 1)}>
+                          <QuantityButton onClick={() => handleQuantityChange(item.id, 1)}>
                             <svg width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path d="M3.33333 10.8333C2.98611 10.8333 2.74306 10.6944 2.60417 10.4167C2.47917 10.1389 2.47917 9.86111 2.60417 9.58333C2.74306 9.30556 2.98611 9.16667 3.33333 9.16667H16.6667C17.0139 9.16667 17.25 9.30556 17.375 9.58333C17.5139 9.86111 17.5139 10.1389 17.375 10.4167C17.25 10.6944 17.0139 10.8333 16.6667 10.8333H3.33333ZM9.16667 3.33333C9.16667 2.98611 9.30556 2.75 9.58333 2.625C9.86111 2.48611 10.1389 2.48611 10.4167 2.625C10.6944 2.75 10.8333 2.98611 10.8333 3.33333V16.6667C10.8333 17.0139 10.6944 17.2569 10.4167 17.3958C10.1389 17.5208 9.86111 17.5208 9.58333 17.3958C9.30556 17.2569 9.16667 17.0139 9.16667 16.6667V3.33333Z" fill="#717171"/>
                             </svg>
@@ -128,10 +205,10 @@ const CartPage = () => {
         )}
       </Content>
 
-      {/* 아이템이 있을 때만 주문 버튼 표시 */}
+      {/* 결제 버튼 */}
       {cartItems.length > 0 && (
-        <FullBottomButton onClick={handleOrder}>
-          {totalPrice.toLocaleString()}원 주문하기
+        <FullBottomButton onClick={handlePayment}>
+          {totalPrice.toLocaleString()}원 결제하기
         </FullBottomButton>
       )}
 
@@ -160,7 +237,7 @@ const CartPage = () => {
 
 export default CartPage;
 
-
+// 스타일 컴포넌트들
 const EmptyCartContent = styled.div`
   flex: 1;
   display: flex;
@@ -191,6 +268,7 @@ const EmptyButton = styled.button`
     background: var(--secondary);
   }
 `;
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -201,12 +279,10 @@ const Container = styled.div`
   overflow: hidden;
 `;
 
-
 const Content = styled.div`
   flex: 1;
   padding: 0 1rem;
-  overflow-y: auto; /* Content 영역에서만 스크롤 */
-  /* 스크롤체인 방지 */
+  overflow-y: auto;
   overscroll-behavior: contain;
 `;
 
@@ -223,10 +299,12 @@ const StoreTitle = styled.h2`
   color: var(--black);
   margin: 0;
 `;
+
 const OrderCount = styled.div`
   ${body_large}
   color: var(--black);
 `;
+
 const TableInfo = styled.span`
   ${display_small}
   color: var(--black);
@@ -257,12 +335,14 @@ const ItemImage = styled.img`
   object-fit: cover;
   background: var(--gray100);
 `;
+
 const ItemRow = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
   width: 100%;
 `;
+
 const ItemInfo = styled.div`
   flex: 1;
   display: flex;
@@ -285,36 +365,34 @@ const QuantityControls = styled.div`
   padding: 0.25rem 0.75rem;
   align-items: center;
   gap: 0.75rem;
-  
   border-radius: 0.625rem;
   border: 1px solid var(--Gray300, #D9D9D9);
   background: var(--white);
-
 `;
 
 const QuantityButton = styled.button`
   ${display_medium}
-  /* 기본 button 스타일 완전히 제거 */
-  background: none; /* 또는 background: transparent; */
-  background-color: transparent; /* 명시적으로 투명 배경 */
-  border: none; /* 기본 테두리 제거 */
-  outline: none; /* 포커스 시 테두리 제거 */
-  padding: 0; /* 기본 패딩 제거 */
-  margin: 0; /* 기본 마진 제거 */
+  background: none;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
   color: var(--Gray700, #717171);
-
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 `;
+
 const PriceQuantitySection = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between; /* 양끝 정렬 */
-  align-items: center; /* 세로 중앙 정렬 */
+  justify-content: space-between;
+  align-items: center;
   width: 100%;
 `;
+
 const QuantityDisplay = styled.span`
   ${body_large}
   color: var(--black);
@@ -426,7 +504,6 @@ const TextArea = styled.textarea`
   border: 1px solid var(--gray300);
   border-radius: 0.625rem;
   align-items: center;
-
   ${body_large}
   resize: none;
   outline: none;
@@ -435,4 +512,3 @@ const TextArea = styled.textarea`
     color: var(--gray700);
   }
 `;
-

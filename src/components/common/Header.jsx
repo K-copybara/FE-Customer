@@ -77,7 +77,7 @@ const Header = ({ storeName, tableNumber, noticeText }) => {
       </TopRow>
       <MainInfoRow>
         <StoreColumn>
-          <TableText>{tableNumber}</TableText>
+          <TableText>{tableNumber}번 테이블</TableText>
           <StoreTitle>{storeName}</StoreTitle>
         </StoreColumn>
         <OrderBtn type="button" onClick={() => navigate('/history')}>

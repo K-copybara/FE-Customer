@@ -34,7 +34,6 @@ const MenuPage = () => {
     }
   };
 
-  // React 18 호환: useCallback으로 최적화된 스크롤 핸들러
   const handleScroll = useCallback(() => {
     // 브라우저 호환성 확인
     if (typeof window === 'undefined') return;
