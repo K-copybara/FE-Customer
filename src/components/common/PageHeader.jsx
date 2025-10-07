@@ -42,7 +42,7 @@ const BackButton = styled.div`
 `;
 
 const HeaderTitle = styled.h1`
-  ${title_large}
+  ${display_medium}
   color: var(--black);
   text-align: center;
   margin: 0;

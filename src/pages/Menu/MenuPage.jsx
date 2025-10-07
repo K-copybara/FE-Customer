@@ -16,8 +16,6 @@ import { useNavigate } from 'react-router-dom';
 import { storeInfo, menuData, categories } from '../../store/dummyStore';
 import { useCartStore } from '../../store/useCartStore';
 
-
-
 const MenuPage = () => {
   const { fetchCart, cartItems, totalPrice } = useCartStore();
   const navigate = useNavigate();
@@ -105,7 +103,7 @@ const MenuPage = () => {
 
   // 메뉴 데이터를 카테고리별로 그룹화
   const getMenusByCategory = (categoryId) => {
-    return menuData.filter(menu => menu.category.categoryId === categoryId);
+    return menuData.filter((menu) => menu.category.categoryId === categoryId);
   };
 
   return (
@@ -129,26 +127,26 @@ const MenuPage = () => {
           {categories.map((category, index) => {
             //해당 카테고리 메뉴만 필터링하기로 수정
             const categoryMenus = getMenusByCategory(category.categoryId);
-            
+
             return (
               // key는 고유해야 하므로
-            //categoryId를 key로 사용
-            <Fragment key={category.categoryId}>
-              {/* index가 0보다 클 때만 (즉, 두 번째 카테고리부터) 구분선 추가 */}
-              {index > 0 && <CategorySpacer />}
-              <CategorySection ref={sectionRefs.current[index]}>
-                {/*카테고리 이름으로 수정*/}
-                <CategoryTitle>{category.categoryName}</CategoryTitle>
-              </CategorySection>
-              {/*필터링된 메뉴 목록*/}
-              {categoryMenus.map((menu) => (
-                <MenuItem
-                  key={menu.menuId}
-                  menu={menu}
-                  onClick={() => handleMenuClick(menu)}
-                />
-              ))}
-            </Fragment>
+              //categoryId를 key로 사용
+              <Fragment key={category.categoryId}>
+                {/* index가 0보다 클 때만 (즉, 두 번째 카테고리부터) 구분선 추가 */}
+                {index > 0 && <CategorySpacer />}
+                <CategorySection ref={sectionRefs.current[index]}>
+                  {/*카테고리 이름으로 수정*/}
+                  <CategoryTitle>{category.categoryName}</CategoryTitle>
+                </CategorySection>
+                {/*필터링된 메뉴 목록*/}
+                {categoryMenus.map((menu) => (
+                  <MenuItem
+                    key={menu.menuId}
+                    menu={menu}
+                    onClick={() => handleMenuClick(menu)}
+                  />
+                ))}
+              </Fragment>
             );
           })}
         </MainContent>
