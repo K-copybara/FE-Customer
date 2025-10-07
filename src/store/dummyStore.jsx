@@ -2,9 +2,10 @@ import mandooSvg from '../assets/mandoo.svg';
 
 // 가게 정보
 export const storeInfo = {
-  storeName: '딤딤섬 명동점',
-  tableNumber: '12번 테이블',
-  noticeText: (
+  storeId: '1', // 추가
+  tableId: 6, // tableNumber -> tableId
+  shopName: '딤딤섬 명동점', //storeName -> shopName
+  notice: ( //noticeText -> notice
     <>
       음식은 무제한 이용 가능합니다.
       <br />
@@ -14,112 +15,146 @@ export const storeInfo = {
 };
 
 // 메뉴 데이터
-export const menuData = {
-  신메뉴: [
+export const menuData = [
     {
-      id: 1,
-      name: '신메뉴 딤섬',
-      description: '새로 출시된 특별한 딤섬',
-      price: 9000,
-      imgUrl: mandooSvg,
-    },
-  ],
-  딤섬: [
-    {
-      id: 2,
-      name: '탕신 딤섬',
-      description:
-        '새우와 돼지고기를 넣고 만든 딤섬으로 부드럽고 쫄깃한 식감이 일품',
-      price: 8000,
-      imgUrl: mandooSvg,
-      icon: null,
+      menuId: 101, // id -> menuId
+      menuName: '탄탄지 샐러드', // name -> menuName
+      menuInfo: '국내산 닭가슴살과 고구마무스가 들어간 샐러드', // description -> menuInfo
+      menuPrice: 8600, // price -> menuPrice
+      menuPicture: mandooSvg, // imgUrl -> menuPicture
+      category: {
+        categoryId: 1,
+        categoryName: '신메뉴',
+      }
     },
     {
-      id: 3,
-      name: '딘타이펑 딤섬',
-      description: '새우와 돼지고기를 넣고 만든 딤섬',
-      price: 8000,
-      imgUrl: mandooSvg,
-      icon: null,
+      menuId: 102,
+      menuName: '탕신 딤섬',
+      menuInfo: '새우와 돼지고기를 넣고 만든 딤섬으로 부드럽고 쫄깃한 식감이 일품',
+      menuPrice: 8000,
+      menuPicture: mandooSvg,
+      category: {
+        categoryId: 2,
+        categoryName: '딤섬',
+      }
     },
     {
-      id: 4,
-      name: '딘타이펑 딤섬',
-      description: '새우와 돼지고기를 넣고 만든 딤섬',
-      price: 8000,
-      imgUrl: mandooSvg,
-      icon: null,
+      menuId: 3,
+      menuName: '딘타이펑 딤섬',
+      menuInfo: '새우와 돼지고기를 넣고 만든 딤섬',
+      menuPrice: 8000,
+      menuPicture: mandooSvg,
+      category: {
+        categoryId: 2,
+        categoryName: '딤섬',
+      }
     },
     {
-      id: 5,
-      name: '딘타이펑 딤섬',
-      description: '새우와 돼지고기를 넣고 만든 딤섬',
-      price: 8000,
-      imgUrl: mandooSvg,
-      icon: null,
+      menuId: 4,
+      menuName: '딘타이펑 딤섬',
+      menuInfo: '새우와 돼지고기를 넣고 만든 딤섬',
+      menuPrice: 8000,
+      menuPicture: mandooSvg,
+      category: {
+        categoryId: 2,
+        categoryName: '딤섬',
+      }
     },
     {
-      id: 6,
-      name: '딘타이펑 딤섬',
-      description: '새우와 돼지고기를 넣고 만든 딤섬',
-      price: 8000,
-      imgUrl: mandooSvg,
-      icon: null,
+      menuId: 5,
+      menuName: '딘타이펑 딤섬',
+      menuInfo: '새우와 돼지고기를 넣고 만든 딤섬',
+      menuPrice: 8000,
+      menuPicture: mandooSvg,
+      category: {
+        categoryId: 2,
+        categoryName: '딤섬',
+      }
     },
     {
-      id: 7,
-      name: '딘타이펑 딤섬',
-      description: '새우와 돼지고기를 넣고 만든 딤섬',
-      price: 8000,
-      imgUrl: mandooSvg,
-      icon: null,
+      menuId: 6,
+      menuName: '딘타이펑 딤섬',
+      menuInfo: '새우와 돼지고기를 넣고 만든 딤섬',
+      menuPrice: 8000,
+      menuPicture: mandooSvg,
+      category: {
+        categoryId: 2,
+        categoryName: '딤섬',
+      }
     },
     {
-      id: 8,
-      name: '딘타이펑 딤섬',
-      description:
-        '새우와 돼지고기를 넣고 만든 딤섬으로 부드럽고 쫄깃한 식감이 일품',
-      price: 8000,
-      imgUrl: mandooSvg,
-      icon: null,
+      menuId: 7,
+      menuName: '딘타이펑 딤섬',
+      menuInfo: '새우와 돼지고기를 넣고 만든 딤섬',
+      menuPrice: 8000,
+      menuPicture: mandooSvg,
+      category: {
+        categoryId: 2,
+        categoryName: '딤섬',
+      }
     },
-  ],
-  창린: [
     {
-      id: 9,
-      name: '창린 요리',
-      description: '전통 창린 스타일 요리',
-      price: 12000,
-      imgUrl: mandooSvg,
-      icon: null,
+      menuId: 8,
+      menuName: '딘타이펑 딤섬',
+      menuInfo: '새우와 돼지고기를 넣고 만든 딤섬으로 부드럽고 쫄깃한 식감이 일품',
+      menuPrice: 8000,
+      menuPicture: mandooSvg,
+      category: {
+        categoryId: 2,
+        categoryName: '딤섬',
+      }
     },
-  ],
-  '광동식 바베큐': [
     {
-      id: 10,
-      name: '차슈',
-      description: '광동식 바베큐 돼지고기',
-      price: 15000,
-      imgUrl: mandooSvg,
-      icon: null,
+      menuId: 9,
+      menuName: '창린 요리',
+      menuInfo: '전통 창린 스타일 요리',
+      menuPrice: 12000,
+      menuPicture: mandooSvg,
+      category: {
+        categoryId: 3,
+        categoryName: '창린',
+      }
     },
-  ],
-  사이드메뉴: [
     {
-      id: 11,
-      name: '만두',
-      description: '집에서 만든 수제 만두',
-      price: 6000,
-      imgUrl: mandooSvg,
-      icon: null,
+      menuId: 10,
+      menuName: '차슈',
+      menuInfo: '광동식 바베큐 돼지고기',
+      menuPrice: 15000,
+      menuPicture: mandooSvg,
+      category: {
+        categoryId: 4,
+        categoryName: '광동식 바베큐',
+      }
     },
-  ],
-};
-
+    {
+      menuId: 11,
+      menuName: '만두',
+      menuInfo: '집에서 만든 수제 만두',
+      menuPrice: 6000,
+      menuPicture: mandooSvg,
+      category: {
+        categoryId: 5,
+        categoryName: '사이드메뉴',
+      }
+    },
+    {
+      menuId: 12,
+      menuName: '물티슈',
+      menuInfo: '한라산 고급 물티슈 제공해드림',
+      menuPrice: 0,
+      menuPicture: mandooSvg,
+      category: {
+        categoryId: 1234,
+        categoryName: '요청사항',
+      }
+    }
+];
+ // 카테고리 목록에 categoryId, categoryName 추가
 export const categories = [
-  '신메뉴',
-  '딤섬',
-  '창린',
-  '광동식 바베큐',
-  '사이드메뉴',
+  {categoryId: 1, categoryName: '신메뉴'},
+  {categoryId: 2, categoryName: '딤섬'},
+  {categoryId: 3, categoryName: '창린'},
+  {categoryId: 4, categoryName: '광동식 바베큐'},
+  {categoryId: 5, categoryName: '사이드메뉴'},
+  {categoryId: 1234, categoryName: '요청사항'},
 ];

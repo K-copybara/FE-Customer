@@ -7,6 +7,8 @@ import ChatPage from './pages/Chat/ChatPage';
 import ReviewPage from './pages/Review/ReviewPage';
 import ReviewCompletePage from './pages/Review/ReviewCompletePage';
 import OrderCompletePage from './pages/Cart/OrderCompletePage';
+import PaymentFail from './pages/Payment/PaymentFail';
+import PaymentSuccess from './pages/Payment/PaymentSuccess';
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
       <Route path="/review" element={<ReviewPage />} />
       <Route path="/reviewcomplete" element={<ReviewCompletePage />} />
       <Route path="/ordercomplete" element={<OrderCompletePage />} />
+      <Route path="/payment/success" element={<PaymentSuccess />} />
+      <Route path="/payment/fail" element={<PaymentFail />} />
     </Routes>
   );
 }

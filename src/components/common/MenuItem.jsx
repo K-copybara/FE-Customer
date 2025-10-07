@@ -5,11 +5,11 @@ const MenuItem = ({ menu, onClick }) => {
   return (
     <Item onClick={onClick}>
       <Info>
-        <Name>{menu.name}</Name>
-        <Desc>{menu.description}</Desc>
-        <Price>{menu.price.toLocaleString()}원</Price>
+        <Name>{menu.menuName}</Name>
+        <Desc>{menu.menuInfo}</Desc>
+        <Price>{menu.menuPrice.toLocaleString()}원</Price>
       </Info>
-      <Img src={menu.imgUrl} alt={menu.name} />
+      <Img src={menu.menuPicture} alt={menu.menuName} />
     </Item>
   );
 };

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { title_large } from '../../styles/font';
-import ARROW_LEFT from '../../assets/arrow_left.svg?react';
+import { display_medium } from '../../styles/font';
+import Backarrow from '../../assets/icon/backarrow-icon.svg?react';
 
 const PageHeader = ({
   title,
@@ -13,7 +13,7 @@ const PageHeader = ({
     <Header>
       {showBackButton ? (
         <BackButton onClick={onClick}>
-          <ARROW_LEFT />
+          <Backarrow />
         </BackButton>
       ) : (
         <div></div>

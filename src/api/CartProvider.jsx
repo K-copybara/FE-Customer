@@ -2,6 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { CartContext } from './CartContext';
 
 export const CartProvider = ({ children }) => {
+  // const [cartItems, setCartItems] = useState(() => {
+  //   const stored = localStorage.getItem('cartItems');
+  //   return stored ? JSON.parse(stored) : [];
+  // });
+
+  //   // 주문내역 상태 추가
+  // const [orderHistory, setOrderHistory] = useState(() => {
+  //   const stored = localStorage.getItem('orderHistory');
+  //   return stored ? JSON.parse(stored) : [];
+  // });
   const [orderHistory, setOrderHistory] = useState([]);
   const [cartItems, setCartItems] = useState([]);
 

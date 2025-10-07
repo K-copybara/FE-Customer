@@ -25,16 +25,17 @@ const CategoryTabs = ({ categories, selected, onSelect }) => {
       ref={scrollRef}
       onWheel={handleWheel}
     >
-      {categories.map((cat, idx) => (
+      {categories.map((category, idx) => (
         <TabItem
-          key={cat}
+          key={category.categoryId} // categoryId를 key로 사용
           isSelected={selected === idx}
           onClick={() => handleTabClick(idx)}
           role="tab"
           aria-selected={selected === idx}
           tabIndex={selected === idx ? 0 : -1}
         >
-          {cat}
+          {/*카테고리 이름으로 변경*/}
+          {category.categoryName}
         </TabItem>
       ))}
       <Divider />
