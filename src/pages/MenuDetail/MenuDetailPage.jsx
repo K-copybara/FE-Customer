@@ -3,6 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { display_large, display_medium, body_large } from '../../styles/font';
 import FullBottomButton from '../../components/common/FullBottomButton';
+import Backarrow from '../../assets/icon/backarrow-icon.svg?react';
+import Amountminus from '../../assets/icon/amountminus-icon.svg?react';
+import Amountplus from '../../assets/icon/amountplus-icon.svg?react';
+
+
+//임시로 이미지만 가져왔듬
+import mandooSvg from '../../assets/mandoo.svg';
 
 const MenuDetailPage = () => {
   const { menuId } = useParams();
@@ -19,11 +26,13 @@ const MenuDetailPage = () => {
         menuName: '탄탄지 샐러드',
         menuPrice: 8600,
         menuInfo: '국내산 닭가슴살과 고구마무스, 건과일이 들어간 샐러드',
-        menuPicture: 'https://cdn.store/menu/101.png',
+        menuPicture: mandooSvg,
       });
     };
     getMenuDetail();
   }, []);
+
+  console.log('메뉴 아이디', menuId);
 
   if (!menuDetail) {
     return (
@@ -40,6 +49,7 @@ const MenuDetailPage = () => {
     );
   }
 
+  //수량 변경
   const handleQuantityChange = (change) => {
     const newQuantity = quantity + change;
     if (newQuantity >= 1) {
@@ -47,6 +57,7 @@ const MenuDetailPage = () => {
     }
   };
 
+  //장바구니 담기
   const handleAddToCart = async () => {
     // 장바구니 추가 api 연결
     navigate('/');
@@ -57,18 +68,7 @@ const MenuDetailPage = () => {
       <ImageButtonContainer>
         <MenuImage src={menuDetail.menuPicture} alt={menuDetail.menuName} />
         <BackButton onClick={() => navigate('/')}>
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M11.7 18.3C11.9833 18.5833 12.0667 18.9 11.95 19.25C11.8333 19.6 11.6 19.8417 11.25 19.975C10.9167 20.0917 10.6 20 10.3 19.7L3.3 12.725C3.08333 12.5083 2.975 12.2667 2.975 12C2.975 11.7333 3.08333 11.4917 3.3 11.275L10.3 4.3C10.5833 4.01667 10.9 3.93333 11.25 4.05C11.6 4.16667 11.8333 4.4 11.95 4.75C12.0833 5.08333 12 5.4 11.7 5.7L5.425 12L11.7 18.3ZM4 13V11H20C20.4167 11 20.7 11.1667 20.85 11.5C21.0167 11.8333 21.0167 12.1667 20.85 12.5C20.7 12.8333 20.4167 13 20 13H4Z"
-              fill="#222222"
-            />
-          </svg>
+          <Backarrow />
         </BackButton>
       </ImageButtonContainer>
       <ContentSection>
@@ -83,33 +83,11 @@ const MenuDetailPage = () => {
               onClick={() => handleQuantityChange(-1)}
               disabled={quantity <= 1}
             >
-              <svg
-                width="15"
-                height="15"
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M3.33333 10.8333C2.98611 10.8333 2.74306 10.6944 2.60417 10.4167C2.47917 10.1389 2.47917 9.86111 2.60417 9.58333C2.74306 9.30556 2.98611 9.16667 3.33333 9.16667H16.6667C17.0139 9.16667 17.25 9.30556 17.375 9.58333C17.5139 9.86111 17.5139 10.1389 17.375 10.4167C17.25 10.6944 17.0139 10.8333 16.6667 10.8333H3.33333Z"
-                  fill="#717171"
-                />
-              </svg>
+              <Amountminus />
             </QuantityButton>
             <QuantityDisplay>{quantity}</QuantityDisplay>
             <QuantityButton onClick={() => handleQuantityChange(1)}>
-              <svg
-                width="15"
-                height="15"
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M3.33333 10.8333C2.98611 10.8333 2.74306 10.6944 2.60417 10.4167C2.47917 10.1389 2.47917 9.86111 2.60417 9.58333C2.74306 9.30556 2.98611 9.16667 3.33333 9.16667H16.6667C17.0139 9.16667 17.25 9.30556 17.375 9.58333C17.5139 9.86111 17.5139 10.1389 17.375 10.4167C17.25 10.6944 17.0139 10.8333 16.6667 10.8333H3.33333ZM9.16667 3.33333C9.16667 2.98611 9.30556 2.75 9.58333 2.625C9.86111 2.48611 10.1389 2.48611 10.4167 2.625C10.6944 2.75 10.8333 2.98611 10.8333 3.33333V16.6667C10.8333 17.0139 10.6944 17.2569 10.4167 17.3958C10.1389 17.5208 9.86111 17.5208 9.58333 17.3958C9.30556 17.2569 9.16667 17.0139 9.16667 16.6667V3.33333Z"
-                  fill="#717171"
-                />
-              </svg>
+              <Amountplus />
             </QuantityButton>
           </QuantityControls>
         </PriceQuantitySection>
