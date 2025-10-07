@@ -7,3 +7,12 @@ export const client = axios.create({
   },
   withCredentials: true,
 });
+
+export const getCustomerKey = async () => {
+  try {
+    const res = await client.get('url');
+    return res.data.data;
+  } catch (err) {
+    console.error(err);
+  }
+};

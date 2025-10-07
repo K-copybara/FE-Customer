@@ -7,17 +7,19 @@ import Backarrow from '../../assets/icon/backarrow-icon.svg?react';
 import Amountminus from '../../assets/icon/amountminus-icon.svg?react';
 import Amountplus from '../../assets/icon/amountplus-icon.svg?react';
 
-
 //임시로 이미지만 가져왔듬
 import mandooSvg from '../../assets/mandoo.svg';
+import { useUserStore } from '../../store/useUserStore';
 
 const MenuDetailPage = () => {
   const { menuId } = useParams();
   const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
   const [menuDetail, setMenuDetail] = useState();
+  const { getUser } = useUserStore();
 
   useEffect(() => {
+    getUser();
     const getMenuDetail = async () => {
       //나중에 api 연결
 
