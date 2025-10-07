@@ -14,20 +14,20 @@ const ReviewPage = () => {
 
   const [ratings, setRatings] = useState({});
 
-  // order 객체가 유효한지 확인합니다.
+  // order 객체가 유효한지 확인
   if (!order || !order.orderId || !order.items) {
     return <div>잘못된 접근입니다.</div>;
   }
 
-  const handleRatingChange = (itemId, rating) => {
+  const handleRatingChange = (menuId, rating) => {
     setRatings((prevRatings) => ({
       ...prevRatings,
-      [itemId]: rating,
+      [menuId]: rating,
     }));
   };
 
   const handleCompleteClick = () => {
-    // 여기서 리뷰 데이터를 저장하는 로직을 호출합니다.
+    // 여기서 리뷰 데이터를 저장하는 로직을 호출
     console.log('리뷰 제출:', ratings);
 
     // 리뷰 완료 페이지로 이동
