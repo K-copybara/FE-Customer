@@ -16,6 +16,8 @@ import { useNavigate } from 'react-router-dom';
 import { storeInfo, menuData, categories } from '../../store/dummyStore';
 import { useCartStore } from '../../store/useCartStore';
 
+
+
 const MenuPage = () => {
   const { fetchCart, cartItems, totalPrice } = useCartStore();
   const navigate = useNavigate();
@@ -45,7 +47,6 @@ const MenuPage = () => {
     }
   };
 
-  // React 18 호환: useCallback으로 최적화된 스크롤 핸들러
   const handleScroll = useCallback(() => {
     // 브라우저 호환성 확인
     if (typeof window === 'undefined') return;
@@ -91,7 +92,7 @@ const MenuPage = () => {
 
   // 메뉴 아이템 클릭 시 상세 페이지로 이동
   const handleMenuClick = (menu) => {
-    navigate(`/menu/${menu.id}`);
+    navigate(`/menu/${menu.menuId}`);
   };
 
   const handleOrder = () => {
@@ -102,15 +103,18 @@ const MenuPage = () => {
     navigate('/chat'); // ChatPage로 이동
   };
 
-  // 또는 더미 사용 (개발 중일 때)
+  // 메뉴 데이터를 카테고리별로 그룹화
+  const getMenusByCategory = (categoryId) => {
+    return menuData.filter(menu => menu.category.categoryId === categoryId);
+  };
 
   return (
     <Layout>
       <ScrollableContent>
         <Header
-          storeName={storeInfo.storeName}
-          tableNumber={storeInfo.tableNumber}
-          noticeText={storeInfo.noticeText}
+          shopName={storeInfo.shopName}
+          tableId={storeInfo.tableId}
+          notice={storeInfo.notice}
         />
 
         <StickyTabs>
@@ -122,22 +126,31 @@ const MenuPage = () => {
         </StickyTabs>
 
         <MainContent>
-          {categories.map((category, index) => (
-            <Fragment key={category}>
+          {categories.map((category, index) => {
+            //해당 카테고리 메뉴만 필터링하기로 수정
+            const categoryMenus = getMenusByCategory(category.categoryId);
+            
+            return (
+              // key는 고유해야 하므로
+            //categoryId를 key로 사용
+            <Fragment key={category.categoryId}>
               {/* index가 0보다 클 때만 (즉, 두 번째 카테고리부터) 구분선 추가 */}
               {index > 0 && <CategorySpacer />}
               <CategorySection ref={sectionRefs.current[index]}>
-                <CategoryTitle>{category}</CategoryTitle>
+                {/*카테고리 이름으로 수정*/}
+                <CategoryTitle>{category.categoryName}</CategoryTitle>
               </CategorySection>
-              {menuData[category]?.map((menu) => (
+              {/*필터링된 메뉴 목록*/}
+              {categoryMenus.map((menu) => (
                 <MenuItem
-                  key={menu.id}
+                  key={menu.menuId}
                   menu={menu}
                   onClick={() => handleMenuClick(menu)}
                 />
               ))}
             </Fragment>
-          ))}
+            );
+          })}
         </MainContent>
       </ScrollableContent>
       <AIButton onClick={handleAIChat}>

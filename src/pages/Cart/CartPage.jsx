@@ -13,15 +13,21 @@ import PageHeader from '../../components/common/PageHeader';
 import { storeInfo } from '../../store/dummyStore';
 import { useCartStore } from '../../store/useCartStore';
 
+import Amountplus from '../../assets/icon/amountplus-icon.svg?react';
+import Amountminus from '../../assets/icon/amountminus-icon.svg?react';
+import Delete from '../../assets/icon/delete-icon.svg?react';
+
 const CartPage = () => {
   const navigate = useNavigate();
-  const { fetchCart, clearCart, cartItems, totalPrice } = useCartStore();
+  const { fetchCart, items, cartId, totalPrice, customerKey } = useCartStore(); //clearCart삭제
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [requestText, setRequestText] = useState('');
   const [tempRequestText, setTempRequestText] = useState('');
 
-  const handleQuantityChange = (cartItemId, change) => {
-    const item = cartItems.find((item) => item.cartItemId === cartItemId);
+  // 결제위젯 관련 state
+  const handleQuantityChange = (id, change) => {
+    const item = items.find((item) => item.id === id);
+    console.log('수량변경', change);
     if (item) {
       //장바구니 수량 변경 api
       fetchCart();
@@ -30,6 +36,7 @@ const CartPage = () => {
 
   const handleRemoveItem = (cartItemId) => {
     //장바구니 삭제 api
+    console.log('삭제', cartItemId);
     fetchCart();
   };
 
@@ -43,37 +50,199 @@ const CartPage = () => {
     setShowRequestModal(true);
   };
 
-  const handleOrder = () => {
-    //결제 준비 api 추가
-    //여기서 결제창으로 넘어가게 하면 됨
+  //요청사항이랑 메뉴 아이템  기준으로 분리
+  const separateItems = () => {
+    const requestItems = items.filter(item => 
+      item.category?.categoryId === 99 &&
+      item.menuName === '요청사항'
 
-    // clearCart();
+    );
+    const menuItems = items.filter(item => 
+      item.category?.categoryId !== 99
+    );
+    return { requestItems, menuItems };
+  };
 
-    const dummyOrder = {
-      orderNumber: 5,
-      items: cartItems,
-      totalPrice: totalPrice,
-      request: '안 맵게 해주세요',
-    };
-    //navigate('/ordercomplete', { state: completedOrder });
-    navigate('/ordercomplete', { state: dummyOrder });
+  //주문 처리
+  const handleOrder = async () => {
+    const { requestItems, menuItems } = separateItems();
+    const hasRequestText = requestText.trim().length > 0;
+    const hasRequestItems = requestItems.length > 0;
+    const hasMenuItems = menuItems.length > 0;
+
+    console.log('주문 처리 시작:', {
+      requestItems: requestItems.length,
+      menuItems: menuItems.length,
+      hasRequestText,
+      결제여부: hasMenuItems ? '결제진행' : '바로완료'
+    });
+
+    try {
+      //메뉴 아이템이 포함된 모든 경우 → 결제 진행
+      if (hasMenuItems) {
+        if (hasMenuItems && !hasRequestItems && !hasRequestText) {
+          console.log('- 메뉴만');
+        } else if (hasMenuItems && !hasRequestItems && hasRequestText) {
+          console.log('- 메뉴 + 요청사항 텍스트');
+        } else if (hasMenuItems && hasRequestItems && !hasRequestText) {
+          console.log('- 메뉴 + 요청사항 아이템');
+        } else if (hasMenuItems && hasRequestItems && hasRequestText) {
+          console.log('- 메뉴 + 요청사항 텍스트 + 요청사항 아이템');
+        }
+        await handlePayment();
+        return;
+      }
+
+      // 요청사항만 있는 경우 → 바로 완료 (결제 없음)
+      if (!hasMenuItems && (hasRequestItems || hasRequestText)) {
+        if (!hasMenuItems && hasRequestItems && !hasRequestText) {
+          console.log('- 요청사항 아이템만');
+        } else if (!hasMenuItems && !hasRequestItems && hasRequestText) {
+          console.log('- 요청사항 텍스트만');
+        } else if (!hasMenuItems && hasRequestItems && hasRequestText) {
+          console.log('- 요청사항 아이템 + 요청사항 텍스트');
+        }
+        
+        await sendRequestOnly(requestItems, requestText);
+        navigate('/ordercomplete', { 
+          state: { 
+            isRequestOnly: true,
+            message: '요청사항이 전달되었습니다.' 
+          } 
+        });
+        return;
+      }
+
+  
+    const sendRequestOnly = async (requestItems, requestNote) => {
+        const requestBody = {
+          storeId: storeInfo.storeId || 1,
+          customerKey: customerKey, //useCartStore에서 가져왔음..맞는지 모르겠
+          requestNote: requestNote || null,
+          items: requestItems.map(item => ({
+            menuId: item.menuId,
+            amount: item.amount
+          }))
+        };
+
+        console.log('요청사항 전송:', requestBody);
+
+        // 더미 응답
+        const mockResponse = {
+          data: {
+            orderRequestId: 1,
+            storeId: storeInfo.storeId,
+            customerKey: customerKey,
+            requestNote: requestNote || null,
+            items: requestItems.map((item, index) => ({
+              orderRequestItemId: index + 1,
+              menuId: item.menuId,
+              amount: item.amount
+            }))
+          }
+        };
+
+        console.log('요청사항 전송 성공:', mockResponse);
+        return mockResponse;
+      };
+
+          // 예외 상황
+          alert('주문할 항목이 없습니다.');
+        } catch (error) {
+          console.error('주문 처리 실패:', error);
+          alert('주문 처리 중 오류가 발생했습니다.');
+        }
+      };
+
+  // 결제창 방식으로 결제 요청
+  const handlePayment = async () => {
+    try {
+      console.log('결제 준비 API 호출 시작');
+
+      const trimmedRequestText = requestText.trim();
+
+      const requestBody = {
+        cartId: cartId || 1234,
+        storeId: storeInfo.storeId || 'store_123',
+        tableId: storeInfo.tableId || 'table_1', // tableNumber를 tableId로 사용
+        ...(trimmedRequestText && { requestNote: trimmedRequestText })
+      };
+
+      console.log('결제 준비 요청:', requestBody);
+
+      // 백엔드 결제 준비 API 호출
+      const prepareResponse = await fetch(
+        'http://localhost:8080/v1/payments/prepare',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody),
+        },
+      );
+
+      if (!prepareResponse.ok) {
+        throw new Error('결제 준비 실패');
+      }
+
+      //세민한테 받은  clientKey, orderId, customerKey
+      const { clientKey, orderId, customerKey } = await prepareResponse.json();
+      console.log('결제 준비 완료:', { clientKey, orderId, customerKey });
+
+      // localStorage에 주문 정보 저장 (기존 방식 유지)
+
+      //localStorage.setItem('pendingOrder', JSON.stringify(orderData));
+
+      // 토스 결제창 호출 (백엔드에서 받은 키 사용)
+      if (typeof window.TossPayments === 'undefined') {
+        alert('결제 시스템이 로딩되지 않았습니다. 페이지를 새로고침해주세요.');
+        return;
+      }
+
+      const tossPayments = window.TossPayments(clientKey);
+      const payment = tossPayments.payment({ customerKey: customerKey });
+
+      await payment.requestPayment({
+        method: 'CARD',
+        amount: {
+          currency: 'KRW',
+          value: totalPrice,
+        },
+        orderId: orderId, // 백엔드에서 받은 orderId
+        orderName: `${storeInfo.shopName} 주문 (${items.length}건)`,
+        customerName: '고객',
+        customerEmail: 'customer@example.com',
+        card: {
+          useEscrow: false,
+          flowMode: 'DEFAULT',
+          useCardPoint: false,
+          useAppCardOnly: false,
+        },
+        successUrl: `${window.location.origin}/payment/success`,
+        failUrl: `${window.location.origin}/payment/fail`,
+      });
+    } catch (error) {
+      console.error('결제 요청 실패:', error);
+      if (error.code === 'USER_CANCEL') {
+        console.log('사용자가 결제를 취소했습니다.');
+      } else {
+        alert('결제 요청 중 오류가 발생했습니다: ' + error.message);
+      }
+    }
   };
 
   return (
     <Container>
-      <PageHeader
-        title="장바구니"
-        onBackClick={() => navigate('/')} // onClick → onBackClick으로 수정
-      />
+      <PageHeader title="장바구니" onClick={() => navigate('/')} />
 
       <Content>
         <StoreInfo>
-          <StoreTitle>{storeInfo.storeName}</StoreTitle>
-          <TableInfo>{storeInfo.tableNumber}</TableInfo>
+          <StoreTitle>{storeInfo.shopName}</StoreTitle>
+          <TableInfo>{storeInfo.tableId}번 테이블</TableInfo>
         </StoreInfo>
 
-        {cartItems.length === 0 ? (
-          // 장바구니가 비어있을 때 표시
+        {items.length === 0 ? (
           <EmptyCartContent>
             <EmptyMessage>메뉴를 담아주세요</EmptyMessage>
             <EmptyButton onClick={() => navigate('/')}>
@@ -81,13 +250,12 @@ const CartPage = () => {
             </EmptyButton>
           </EmptyCartContent>
         ) : (
-          // 장바구니에 아이템이 있을 때 표시
           <>
-            <OrderCount>총 {cartItems.length}건</OrderCount>
+            <OrderCount>총 {items.length}건</OrderCount>
 
             <CartItems>
-              {cartItems.map((item) => (
-                <CartItem key={item.cartItemId}>
+              {items.map((item) => (
+                <CartItem key={item.menuId}>
                   <ItemRow>
                     <ItemImage src={item.menuPicture} alt={item.menuName} />
                     <ItemInfo>
@@ -102,18 +270,7 @@ const CartPage = () => {
                             }
                             disabled={item.amount <= 1}
                           >
-                            <svg
-                              width="15"
-                              height="15"
-                              viewBox="0 0 20 20"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M3.33333 10.8333C2.98611 10.8333 2.74306 10.6944 2.60417 10.4167C2.47917 10.1389 2.47917 9.86111 2.60417 9.58333C2.74306 9.30556 2.98611 9.16667 3.33333 9.16667H16.6667C17.0139 9.16667 17.25 9.30556 17.375 9.58333C17.5139 9.86111 17.5139 10.1389 17.375 10.4167C17.25 10.6944 17.0139 10.8333 16.6667 10.8333H3.33333Z"
-                                fill="#717171"
-                              />
-                            </svg>
+                            <Amountminus />
                           </QuantityButton>
                           <QuantityDisplay>{item.amount}</QuantityDisplay>
                           <QuantityButton
@@ -121,18 +278,7 @@ const CartPage = () => {
                               handleQuantityChange(item.cartItemId, 1)
                             }
                           >
-                            <svg
-                              width="15"
-                              height="15"
-                              viewBox="0 0 20 20"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M3.33333 10.8333C2.98611 10.8333 2.74306 10.6944 2.60417 10.4167C2.47917 10.1389 2.47917 9.86111 2.60417 9.58333C2.74306 9.30556 2.98611 9.16667 3.33333 9.16667H16.6667C17.0139 9.16667 17.25 9.30556 17.375 9.58333C17.5139 9.86111 17.5139 10.1389 17.375 10.4167C17.25 10.6944 17.0139 10.8333 16.6667 10.8333H3.33333ZM9.16667 3.33333C9.16667 2.98611 9.30556 2.75 9.58333 2.625C9.86111 2.48611 10.1389 2.48611 10.4167 2.625C10.6944 2.75 10.8333 2.98611 10.8333 3.33333V16.6667C10.8333 17.0139 10.6944 17.2569 10.4167 17.3958C10.1389 17.5208 9.86111 17.5208 9.58333 17.3958C9.30556 17.2569 9.16667 17.0139 9.16667 16.6667V3.33333Z"
-                                fill="#717171"
-                              />
-                            </svg>
+                            <Amountplus />
                           </QuantityButton>
                         </QuantityControls>
                       </PriceQuantitySection>
@@ -141,7 +287,7 @@ const CartPage = () => {
                   <RemoveButton
                     onClick={() => handleRemoveItem(item.cartItemId)}
                   >
-                    ×
+                    <Delete />
                   </RemoveButton>
                 </CartItem>
               ))}
@@ -166,10 +312,19 @@ const CartPage = () => {
         )}
       </Content>
 
-      {/* 아이템이 있을 때만 주문 버튼 표시 */}
-      {cartItems.length > 0 && (
+      {/* 결제하기 or 요청사항 전달하기 */}
+      {items.length > 0 && (
         <FullBottomButton onClick={handleOrder}>
-          {totalPrice.toLocaleString()}원 주문하기
+          {(() => {
+            const { requestItems, menuItems } = separateItems();
+            const hasMenuItems = menuItems.length > 0;
+            console.log('주문 처리:', { requestItems, menuItems });
+            if (hasMenuItems) {
+              return `${totalPrice.toLocaleString()}원 결제하기`;
+            } else {
+              return '요청사항 전달하기';
+            }
+          })()}
         </FullBottomButton>
       )}
 
@@ -228,6 +383,7 @@ const EmptyButton = styled.button`
     background: var(--secondary);
   }
 `;
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -241,8 +397,7 @@ const Container = styled.div`
 const Content = styled.div`
   flex: 1;
   padding: 0 1rem;
-  overflow-y: auto; /* Content 영역에서만 스크롤 */
-  /* 스크롤체인 방지 */
+  overflow-y: auto;
   overscroll-behavior: contain;
 `;
 
@@ -259,10 +414,12 @@ const StoreTitle = styled.h2`
   color: var(--black);
   margin: 0;
 `;
+
 const OrderCount = styled.div`
   ${body_large}
   color: var(--black);
 `;
+
 const TableInfo = styled.span`
   ${display_small}
   color: var(--black);
@@ -293,12 +450,14 @@ const ItemImage = styled.img`
   object-fit: cover;
   background: var(--gray100);
 `;
+
 const ItemRow = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
   width: 100%;
 `;
+
 const ItemInfo = styled.div`
   flex: 1;
   display: flex;
@@ -329,27 +488,27 @@ const QuantityControls = styled.div`
 
 const QuantityButton = styled.button`
   ${display_medium}
-  /* 기본 button 스타일 완전히 제거 */
-  background: none; /* 또는 background: transparent; */
-  background-color: transparent; /* 명시적으로 투명 배경 */
-  border: none; /* 기본 테두리 제거 */
-  outline: none; /* 포커스 시 테두리 제거 */
-  padding: 0; /* 기본 패딩 제거 */
-  margin: 0; /* 기본 마진 제거 */
+  background: none;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
   color: var(--Gray700, #717171);
-
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 `;
+
 const PriceQuantitySection = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between; /* 양끝 정렬 */
-  align-items: center; /* 세로 중앙 정렬 */
+  justify-content: space-between;
+  align-items: center;
   width: 100%;
 `;
+
 const QuantityDisplay = styled.span`
   ${body_large}
   color: var(--black);
@@ -464,7 +623,6 @@ const TextArea = styled.textarea`
   border: 1px solid var(--gray300);
   border-radius: 0.625rem;
   align-items: center;
-
   ${body_large}
   resize: none;
   outline: none;
