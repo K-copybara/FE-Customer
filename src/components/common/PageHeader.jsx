@@ -3,11 +3,11 @@ import styled from 'styled-components';
 import { display_medium } from '../../styles/font';
 import Backarrow from '../../assets/icon/backarrow-icon.svg?react';
 
-const PageHeader = ({ 
-  title, 
-  onClick, 
+const PageHeader = ({
+  title,
+  onClick,
   showBackButton = true,
-  rightElement = null 
+  rightElement = null,
 }) => {
   return (
     <Header>
@@ -18,9 +18,9 @@ const PageHeader = ({
       ) : (
         <div></div>
       )}
-      
+
       <HeaderTitle>{title}</HeaderTitle>
-      
+
       {rightElement || <div></div>}
     </Header>
   );
@@ -37,18 +37,12 @@ const Header = styled.div`
   border-bottom: 1px solid var(--gray300);
 `;
 
-const BackButton = styled.button`
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  color: var(--black);
+const BackButton = styled.div`
   cursor: pointer;
-  padding: 0.25rem;
-  justify-self: start;
 `;
 
 const HeaderTitle = styled.h1`
-  ${display_medium}
+  ${title_large}
   color: var(--black);
   text-align: center;
   margin: 0;
