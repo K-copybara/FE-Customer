@@ -1,6 +1,6 @@
 import { client } from './client';
 
-export const getStoreInfo = async () => {
+export const getStoreInfo = async (storeId, tableId) => {
   try {
     const res = await client.get(
       `/api/customer/store/${storeId}?tableId=${tableId}`,
@@ -11,7 +11,7 @@ export const getStoreInfo = async () => {
   }
 };
 
-export const getCategoryInfo = async () => {
+export const getCategoryInfo = async (storeId) => {
   try {
     const res = await client.get(`/api/customer/store/${storeId}/categories`);
     return res.data.data;
@@ -20,7 +20,7 @@ export const getCategoryInfo = async () => {
   }
 };
 
-export const getMenuDetail = async (menuId) => {
+export const getMenuDetail = async (storeId, menuId) => {
   try {
     const res = await client.get(
       `/api/customer/store/${storeId}/menus/${menuId}`,
@@ -31,7 +31,7 @@ export const getMenuDetail = async (menuId) => {
   }
 };
 
-export const getMenuAll = async () => {
+export const getMenuAll = async (storeId) => {
   try {
     const res = await client.get(`/api/customer/store/${storeId}/menus`);
     return res.data.data;

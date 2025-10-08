@@ -3,12 +3,10 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { display_medium, body_large, body_medium } from '../../styles/font';
 import FullBottomButton from '../../components/common/FullBottomButton';
-import { useCartStore } from '../../store/useCartStore';
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { clearCart } = useCartStore();
 
   const [isProcessing, setIsProcessing] = useState(true);
   const [orderInfo, setOrderInfo] = useState(null);
@@ -80,9 +78,6 @@ const PaymentSuccess = () => {
 
             // Context의 주문 완료 처리
             setOrderInfo(completedOrderData);
-
-            // 장바구니 비우기
-            clearCart();
 
             // localStorage 정리
             localStorage.removeItem('pendingOrder');

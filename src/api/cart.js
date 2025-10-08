@@ -9,7 +9,7 @@ export const postCart = async (data) => {
   }
 };
 
-export const getCartData = async () => {
+export const getCartData = async (storeId, customerKey) => {
   try {
     const res = await client.get(
       `/api/customer/cart?storeId=${storeId}&customerKey=${customerKey}`,
@@ -20,7 +20,7 @@ export const getCartData = async () => {
   }
 };
 
-export const patchCart = async (data) => {
+export const patchCart = async (cartItemId, data) => {
   try {
     const res = await client.patch(`/api/customer/cart/${cartItemId}`, data);
     return res.data.data;
@@ -29,7 +29,7 @@ export const patchCart = async (data) => {
   }
 };
 
-export const deleteCart = async () => {
+export const deleteCart = async (cartItemId) => {
   try {
     const res = await client.patch(`/api/customer/cart/${cartItemId}`);
     return res.data.data;
