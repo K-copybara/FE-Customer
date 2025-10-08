@@ -9,7 +9,7 @@ export const postChatSession = async (data) => {
   }
 };
 
-export const getChatList = async () => {
+export const getChatList = async (sessionId) => {
   try {
     const res = await client.get(
       `/api/customer/chat/session/${sessionId}/messages`,

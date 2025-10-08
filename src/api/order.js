@@ -9,7 +9,7 @@ export const postRequest = async (data) => {
   }
 };
 
-export const getOrderHistory = async () => {
+export const getOrderHistory = async (customerKey) => {
   try {
     const res = await client.get(
       `/api/customer/orders?customerKey=${customerKey}`,
