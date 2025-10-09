@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PageHeader from '../../components/common/PageHeader';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { display_small, display_medium, body_large } from '../../styles/font';
+import { display_medium, body_large, body_medium, title_large, title_medium } from '../../styles/font';
 import { storeInfo } from '../../store/dummyStore';
 
 import ReviewIcon from '../../assets/icon/review-icon.svg?react';
@@ -225,7 +225,7 @@ const StoreTitle = styled.h2`
 `;
 
 const TableInfo = styled.span`
-  ${display_small}
+  ${body_medium}
   color: var(--black);
 `;
 
@@ -241,12 +241,12 @@ const TotalOrderInfo = styled.div`
 `;
 
 const TotalOrderText = styled.div`
-  ${display_medium}
+  ${title_large}
   color: var(--black);
 `;
 
 const TotalOrderAmountText = styled.div`
-  ${display_medium}
+  ${title_large}
   color: var(--black);
 `;
 
@@ -290,7 +290,7 @@ const OrderHeader = styled.div`
 `;
 
 const OrderStatus = styled.div`
-  ${body_large}
+  ${title_medium}
   color: var(--primary);
 `;
 
@@ -307,7 +307,7 @@ const OrderItemInfo = styled.div`
 `;
 
 const OrderNumberText = styled.div`
-  ${display_medium}
+  ${title_large}
   border-bottom: 1px solid var(--gray300);
   padding-bottom: 1.25rem;
   color: var(--black);
@@ -332,7 +332,7 @@ const ItemPrice = styled.div`
 `;
 
 const TotalAmount = styled.div`
-  ${body_large}
+  ${title_medium}
   padding: 1rem 0 1.25rem 0;
   color: var(--black);
   display: flex;
@@ -346,7 +346,7 @@ const RequestSection = styled.div`
 `;
 
 const RequestLabel = styled.div`
-  ${body_large}
+  ${title_medium}
   margin-bottom: 0.75rem;
 `;
 
@@ -368,8 +368,8 @@ const ReviewButton = styled.button`
   align-items: flex-end;
   justify-content: flex-end;
   align-self: flex-end;
-  text-align: rlex-end;
-  ${body_large}
+  text-align: flex-end;
+  ${title_medium}
   cursor: pointer;
 
   &:hover {

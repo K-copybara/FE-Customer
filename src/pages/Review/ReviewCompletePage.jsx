@@ -2,7 +2,7 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { display_large, display_medium } from '../../styles/font';
+import { display_large, title_large } from '../../styles/font';
 import FullBottomButton from '../../components/common/FullBottomButton';
 
 const ReviewCompletePage = () => {
@@ -73,7 +73,7 @@ const Title = styled.h1`
 `;
 
 const OrderNumber = styled.div`
-  ${display_medium}
+  ${title_large}
   color: var(--primary);
   text-align: center;
   margin-bottom: 5rem;
