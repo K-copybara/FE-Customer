@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { display_medium, display_small } from "../../styles/font";
+import { body_medium, display_medium, title_large } from "../../styles/font";
 
 const MenuItem = ({ menu, onClick }) => {
   return (
@@ -19,15 +19,15 @@ export default MenuItem;
 // 스타일 컴포넌트들은 이전과 동일...
 const Item = styled.li`
   display: flex;
-  justify-content: space-between; /* 텍스트와 이미지를 양 끝으로 */
+  justify-content: space-between;
   align-items: flex-start; /* 부모 컨테이너의 전체 너비 사용 */
   align-self: stretch; /* 부모 컨테이너의 전체 너비 사용 */
-  padding: 1.25rem 0; /* 아이템 상하 여백 */
-  gap: 1rem; /* 텍스트와 이미지 사이 간격 */
+  padding: 1.25rem 0; 
+  gap: 1rem; 
   cursor: pointer;
-  background: var(--background); /* 배경색 투명하게 */
-  border: none; /* 테두리 제거 */
-  box-shadow: none; /* 그림자 제거 */
+  background: var(--background); 
+  border: none; 
+  box-shadow: none;
 `;
 
 const Img = styled.img`
@@ -55,13 +55,13 @@ const Name = styled.p`
 `;
 
 const Desc = styled.p`
-  ${display_small}
+  ${body_medium}
   color: var(--gray700);
   margin: 0;
 `;
 
 const Price = styled.p`
-  ${display_medium}
+  ${title_large}
   color: var(--black);
   margin: 0.5rem 0 0 0;
 `;

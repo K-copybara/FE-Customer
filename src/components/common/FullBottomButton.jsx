@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { display_medium } from "../../styles/font";
+import { title_large } from "../../styles/font";
 
 const FullBottomButton = ({
   children,
@@ -37,7 +37,7 @@ const ButtonWrapper = styled.div`
 `;
 
 const Button = styled.button`
-  ${display_medium}
+  ${title_large}
   width: 100%;
   height: 3rem;
   background: var(--primary, #190eaa);

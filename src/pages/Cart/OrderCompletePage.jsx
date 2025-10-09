@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { display_large, body_large, display_medium } from '../../styles/font';
+import { display_large, body_large, title_large, title_medium } from '../../styles/font';
 import FullBottomButton from '../../components/common/FullBottomButton';
 
 import Send from '../../assets/icon/send-icon.svg?react';
@@ -116,7 +116,7 @@ const Title = styled.h1`
 `;
 
 const OrderNumber = styled.div`
-  ${display_medium}
+  ${title_large}
   color: var(--primary);
   text-align: center;
   margin-bottom: 2rem;
@@ -158,7 +158,7 @@ const ItemName = styled.div`
 `;
 
 const ItemQuantity = styled.div`
-  ${body_large}
+  ${title_medium}
   color: var(--black);
 `;
 
@@ -181,7 +181,7 @@ const SummaryLabel = styled.span`
 `;
 
 const SummaryValue = styled.span`
-  ${body_large}
+  ${title_medium}
   color: var(--black);
 `;
 
@@ -191,7 +191,7 @@ const RequestInfo = styled.div`
 `;
 
 const RequestTitle = styled.div`
-  ${body_large}
+  ${title_medium}
   color: var(--black);
   margin-bottom: 0.5rem;
 `;

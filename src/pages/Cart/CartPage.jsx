@@ -5,8 +5,8 @@ import {
   display_medium,
   body_large,
   body_medium,
-  body_small,
-  display_small,
+  title_medium,
+  title_large,
 } from '../../styles/font';
 import FullBottomButton from '../../components/common/FullBottomButton';
 import PageHeader from '../../components/common/PageHeader';
@@ -411,12 +411,12 @@ const StoreTitle = styled.h2`
 `;
 
 const OrderCount = styled.div`
-  ${body_large}
+  ${title_medium}
   color: var(--black);
 `;
 
 const TableInfo = styled.span`
-  ${display_small}
+  ${body_medium}
   color: var(--black);
 `;
 
@@ -461,12 +461,12 @@ const ItemInfo = styled.div`
 `;
 
 const ItemName = styled.div`
-  ${display_medium}
+  ${title_large}
   color: var(--black);
 `;
 
 const ItemPrice = styled.div`
-  ${body_large}
+  ${title_medium}
   color: var(--black);
 `;
 
@@ -482,7 +482,6 @@ const QuantityControls = styled.div`
 `;
 
 const QuantityButton = styled.button`
-  ${display_medium}
   background: none;
   background-color: transparent;
   border: none;
@@ -505,7 +504,7 @@ const PriceQuantitySection = styled.div`
 `;
 
 const QuantityDisplay = styled.span`
-  ${body_large}
+  ${title_medium}
   color: var(--black);
 `;
 
@@ -545,15 +544,15 @@ const RequestButton = styled.button`
 const RequestWithText = styled.button`
   width: 100%;
   padding: 1rem;
-  border: 1px solid var(--gray300);
-  border-radius: 0.5rem;
+  border: 1px solid var(--secondary);
+  border-radius: 0.625rem;
   background: var(--background);
   cursor: pointer;
   text-align: left;
 `;
 
 const RequestLabel = styled.div`
-  ${body_small}
+  ${body_large}
   color: var(--gray500);
   margin-bottom: 0.25rem;
 `;
@@ -606,7 +605,7 @@ const ModalHeader = styled.div`
 `;
 
 const ModalTitle = styled.h3`
-  ${display_medium}
+  ${title_large}
   color: var(--black);
   margin: 0;
 `;

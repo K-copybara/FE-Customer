@@ -7,7 +7,7 @@ import {
   createRef,
   Fragment,
 } from 'react';
-import { display_medium } from '../../styles/font';
+import { title_large } from '../../styles/font';
 import Header from '../../components/common/Header';
 import FullBottomButton from '../../components/common/FullBottomButton';
 import CategoryTabs from '../../components/common/CategoryTabs';
@@ -399,7 +399,7 @@ const CategorySection = styled.section`
 `;
 
 const CategoryTitle = styled.h2`
-  ${display_medium}
+  ${title_large}
   flex: 1 0 0;
   color: var(--black);
   margin: 0.25rem 0 0;
@@ -413,7 +413,7 @@ const CategorySpacer = styled.div`
 `;
 
 const AIButton = styled.button`
-  ${display_medium}
+  ${title_large}
   display: flex;
   padding: 0.625rem 0.75rem;
   align-items: center;

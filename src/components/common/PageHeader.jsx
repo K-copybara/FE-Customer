@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { display_medium } from '../../styles/font';
+import { title_large } from '../../styles/font';
 import Backarrow from '../../assets/icon/backarrow-icon.svg?react';
 
 const PageHeader = ({
@@ -42,7 +42,7 @@ const BackButton = styled.div`
 `;
 
 const HeaderTitle = styled.h1`
-  ${display_medium}
+  ${title_large}
   color: var(--black);
   text-align: center;
   margin: 0;
