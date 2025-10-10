@@ -380,6 +380,9 @@ const ScrollableContent = styled.div`
   flex: 1; /* Header를 제외한 나머지 모든 공간을 차지 */
   overflow-y: auto; /* 이 영역만 세로 스크롤이 가능해짐 */
   -webkit-overflow-scrolling: touch; /* 모바일에서 부드러운 스크롤 */
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const StickyTabs = styled.div`
