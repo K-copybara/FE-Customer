@@ -17,12 +17,12 @@ const EntryPage = () => {
 
     if (storeParam && tableParam) {
       const fetchCustomerKey = async () => {
-        //const customerKey = await getCustomerKey();
-        const customerKey = 'customerkey';
-
         const storeId = atob(storeParam);
         const tableId = atob(tableParam);
-        setUser({ storeId, tableId, customerKey });
+
+        const res = await getCustomerKey(storeId, tableId);
+
+        setUser(res);
         navigate('/', { replace: true });
       };
 
@@ -32,7 +32,7 @@ const EntryPage = () => {
     }
   }, [navigate, setUser, clearUser]);
 
-  return <Layout>QR코드로 재접속해주세요</Layout>;
+  return <Layout>{'세션이 만료되었습니다.\nQR코드로 재접속해주세요.'}</Layout>;
 };
 
 export default EntryPage;

@@ -8,11 +8,23 @@ export const client = axios.create({
   withCredentials: true,
 });
 
-export const getCustomerKey = async () => {
+export const getCustomerKey = async (storeId, tableId) => {
   try {
-    const res = await client.get('url');
+    const res = await client.post('api/customer/session', { storeId, tableId });
     return res.data.data;
   } catch (err) {
     console.error(err);
   }
 };
+
+client.interceptors.response.use(
+  (res) => res,
+  async (error) => {
+    if (error.response?.status === 401) {
+      sessionStorage.removeItem('token');
+      return Promise.reject(err);
+    }
+
+    return Promise.reject(error);
+  },
+);

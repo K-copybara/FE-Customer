@@ -8,23 +8,25 @@ export const useUserStore = create(
       tableId: null,
       customerKey: null,
       sessionId: null,
-      expiry: null,
+      expiresAt: null,
 
-      setUser: ({ storeId, tableId, customerKey }) => {
-        const threeHours = 3 * 60 * 60 * 1000;
-        const expiry = Date.now() + threeHours;
-
-        set({ storeId, tableId, customerKey, expiry });
+      setUser: ({ storeId, tableId, customerKey, expiresAt }) => {
+        set({ storeId, tableId, customerKey, expiresAt });
       },
       getUser: () => {
-        const { storeId, tableId, customerKey } = get();
+        const { storeId, tableId, customerKey, expiresAt } = get();
 
-        return { storeId, tableId, customerKey };
+        return { storeId, tableId, customerKey, expiresAt };
       },
       setSessionId: (id) => set({ sessionId: id }),
 
       clearUser: () => {
-        set({ storeId: null, tableId: null, customerKey: null, expiry: null });
+        set({
+          storeId: null,
+          tableId: null,
+          customerKey: null,
+          expiresAt: null,
+        });
       },
     })),
     {
