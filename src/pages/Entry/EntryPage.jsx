@@ -26,7 +26,7 @@ const EntryPage = () => {
           storeId: 1,
           tableId: 3,
           customerKey: 'cust-17246c9c-e585-4dfa-9183-84f654a259cc',
-          expiresAt: '2025-10-11T03:00:00.794729',
+          expiresAt: '2025-10-15T03:00:00.794729',
         });
         navigate('/', { replace: true });
       };
