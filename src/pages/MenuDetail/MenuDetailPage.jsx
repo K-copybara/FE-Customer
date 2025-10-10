@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { display_large, display_medium, body_large } from '../../styles/font';
+import { display_large, body_large } from '../../styles/font';
 import FullBottomButton from '../../components/common/FullBottomButton';
 import Backarrow from '../../assets/icon/backarrow-icon.svg?react';
 import Amountminus from '../../assets/icon/amountminus-icon.svg?react';
 import Amountplus from '../../assets/icon/amountplus-icon.svg?react';
 
-
 //임시로 이미지만 가져왔듬
 import mandooSvg from '../../assets/mandoo.svg';
+import { useUserStore } from '../../store/useUserStore';
 
 const MenuDetailPage = () => {
   const { menuId } = useParams();
   const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
   const [menuDetail, setMenuDetail] = useState();
+  const { getUser } = useUserStore();
 
   useEffect(() => {
+    getUser();
     const getMenuDetail = async () => {
       //나중에 api 연결
 
@@ -176,7 +178,7 @@ const MenuName = styled.h2`
 `;
 
 const MenuDescription = styled.p`
-  ${display_medium}
+  ${body_large}
   color: var(--gray700);
 `;
 
@@ -205,7 +207,6 @@ const QuantityControls = styled.div`
 `;
 
 const QuantityButton = styled.button`
-  ${display_medium}
   /* 기본 button 스타일 완전히 제거 */
   background: none; /* 또는 background: transparent; */
   background-color: transparent; /* 명시적으로 투명 배경 */

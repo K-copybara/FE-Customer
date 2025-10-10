@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { display_medium, display_large } from '../../styles/font';
+import { display_large, title_large } from '../../styles/font';
 import FullBottomButton from '../../components/common/FullBottomButton';
 import StarRating from '../../components/common/StarRating';
 import PageHeader from '../../components/common/PageHeader';
@@ -87,7 +87,7 @@ const Content = styled.div`
 `;
 
 const OrderNumberText = styled.div`
-  ${display_medium}
+  ${title_large}
   text-align: center;
   color: var(--black);
   padding: 1.5rem;

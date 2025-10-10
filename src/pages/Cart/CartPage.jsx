@@ -1,17 +1,16 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import {
   display_medium,
   body_large,
   body_medium,
-  body_small,
-  display_small,
+  title_medium,
+  title_large,
 } from '../../styles/font';
 import FullBottomButton from '../../components/common/FullBottomButton';
 import PageHeader from '../../components/common/PageHeader';
 import { storeInfo } from '../../store/dummyStore';
-import { useCartStore } from '../../store/useCartStore';
 
 import Amountplus from '../../assets/icon/amountplus-icon.svg?react';
 import Amountminus from '../../assets/icon/amountminus-icon.svg?react';
@@ -52,14 +51,11 @@ const CartPage = () => {
 
   //요청사항이랑 메뉴 아이템  기준으로 분리
   const separateItems = () => {
-    const requestItems = items.filter(item => 
-      item.category?.categoryId === 99 &&
-      item.menuName === '요청사항'
-
+    const requestItems = items.filter(
+      (item) =>
+        item.category?.categoryId === 99 && item.menuName === '요청사항',
     );
-    const menuItems = items.filter(item => 
-      item.category?.categoryId !== 99
-    );
+    const menuItems = items.filter((item) => item.category?.categoryId !== 99);
     return { requestItems, menuItems };
   };
 
@@ -74,7 +70,7 @@ const CartPage = () => {
       requestItems: requestItems.length,
       menuItems: menuItems.length,
       hasRequestText,
-      결제여부: hasMenuItems ? '결제진행' : '바로완료'
+      결제여부: hasMenuItems ? '결제진행' : '바로완료',
     });
 
     try {
@@ -102,27 +98,26 @@ const CartPage = () => {
         } else if (!hasMenuItems && hasRequestItems && hasRequestText) {
           console.log('- 요청사항 아이템 + 요청사항 텍스트');
         }
-        
+
         await sendRequestOnly(requestItems, requestText);
-        navigate('/ordercomplete', { 
-          state: { 
+        navigate('/ordercomplete', {
+          state: {
             isRequestOnly: true,
-            message: '요청사항이 전달되었습니다.' 
-          } 
+            message: '요청사항이 전달되었습니다.',
+          },
         });
         return;
       }
 
-  
-    const sendRequestOnly = async (requestItems, requestNote) => {
+      const sendRequestOnly = async (requestItems, requestNote) => {
         const requestBody = {
           storeId: storeInfo.storeId || 1,
           customerKey: customerKey, //useCartStore에서 가져왔음..맞는지 모르겠
           requestNote: requestNote || null,
-          items: requestItems.map(item => ({
+          items: requestItems.map((item) => ({
             menuId: item.menuId,
-            amount: item.amount
-          }))
+            amount: item.amount,
+          })),
         };
 
         console.log('요청사항 전송:', requestBody);
@@ -137,22 +132,22 @@ const CartPage = () => {
             items: requestItems.map((item, index) => ({
               orderRequestItemId: index + 1,
               menuId: item.menuId,
-              amount: item.amount
-            }))
-          }
+              amount: item.amount,
+            })),
+          },
         };
 
         console.log('요청사항 전송 성공:', mockResponse);
         return mockResponse;
       };
 
-          // 예외 상황
-          alert('주문할 항목이 없습니다.');
-        } catch (error) {
-          console.error('주문 처리 실패:', error);
-          alert('주문 처리 중 오류가 발생했습니다.');
-        }
-      };
+      // 예외 상황
+      alert('주문할 항목이 없습니다.');
+    } catch (error) {
+      console.error('주문 처리 실패:', error);
+      alert('주문 처리 중 오류가 발생했습니다.');
+    }
+  };
 
   // 결제창 방식으로 결제 요청
   const handlePayment = async () => {
@@ -165,7 +160,7 @@ const CartPage = () => {
         cartId: cartId || 1234,
         storeId: storeInfo.storeId || 'store_123',
         tableId: storeInfo.tableId || 'table_1', // tableNumber를 tableId로 사용
-        ...(trimmedRequestText && { requestNote: trimmedRequestText })
+        ...(trimmedRequestText && { requestNote: trimmedRequestText }),
       };
 
       console.log('결제 준비 요청:', requestBody);
@@ -416,12 +411,12 @@ const StoreTitle = styled.h2`
 `;
 
 const OrderCount = styled.div`
-  ${body_large}
+  ${title_medium}
   color: var(--black);
 `;
 
 const TableInfo = styled.span`
-  ${display_small}
+  ${body_medium}
   color: var(--black);
 `;
 
@@ -466,12 +461,12 @@ const ItemInfo = styled.div`
 `;
 
 const ItemName = styled.div`
-  ${display_medium}
+  ${title_large}
   color: var(--black);
 `;
 
 const ItemPrice = styled.div`
-  ${body_large}
+  ${title_medium}
   color: var(--black);
 `;
 
@@ -487,7 +482,6 @@ const QuantityControls = styled.div`
 `;
 
 const QuantityButton = styled.button`
-  ${display_medium}
   background: none;
   background-color: transparent;
   border: none;
@@ -510,7 +504,7 @@ const PriceQuantitySection = styled.div`
 `;
 
 const QuantityDisplay = styled.span`
-  ${body_large}
+  ${title_medium}
   color: var(--black);
 `;
 
@@ -550,15 +544,15 @@ const RequestButton = styled.button`
 const RequestWithText = styled.button`
   width: 100%;
   padding: 1rem;
-  border: 1px solid var(--gray300);
-  border-radius: 0.5rem;
+  border: 1px solid var(--secondary);
+  border-radius: 0.625rem;
   background: var(--background);
   cursor: pointer;
   text-align: left;
 `;
 
 const RequestLabel = styled.div`
-  ${body_small}
+  ${body_large}
   color: var(--gray500);
   margin-bottom: 0.25rem;
 `;
@@ -611,7 +605,7 @@ const ModalHeader = styled.div`
 `;
 
 const ModalTitle = styled.h3`
-  ${display_medium}
+  ${title_large}
   color: var(--black);
   margin: 0;
 `;

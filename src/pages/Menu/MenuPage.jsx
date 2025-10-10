@@ -7,26 +7,209 @@ import {
   createRef,
   Fragment,
 } from 'react';
-import { display_medium } from '../../styles/font';
+import { title_large } from '../../styles/font';
 import Header from '../../components/common/Header';
 import FullBottomButton from '../../components/common/FullBottomButton';
 import CategoryTabs from '../../components/common/CategoryTabs';
 import MenuItem from '../../components/common/MenuItem';
 import { useNavigate } from 'react-router-dom';
-import { storeInfo, menuData, categories } from '../../store/dummyStore';
-import { useCartStore } from '../../store/useCartStore';
-
 import AiIcon from '../../assets/icon/ai-icon.svg?react';
+import { storeInfo } from '../../store/dummyStore';
+import { getCategoryInfo, getMenuAll } from '../../api/store';
+import { useUserStore } from '../../store/useUserStore';
+import { getCartData } from '../../api/cart';
+import mandooSvg from '../../assets/mandoo.svg';
 
 const MenuPage = () => {
-  const { fetchCart, cartItems, totalPrice } = useCartStore();
+  const { storeId, customerKey } = useUserStore();
   const navigate = useNavigate();
 
   const [selectedCategory, setSelectedCategory] = useState(0);
+  const [categories, setCategories] = useState([]);
+  const [menuData, setMenuData] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
 
   useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        //const res = await getCartData(storeId, customerKey);
+        //setTotalPrice(res.totalPrice);
+        setTotalPrice(2000);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
     fetchCart();
-  }, [fetchCart]);
+  }, []);
+
+  useEffect(() => {
+    const fetchCategory = async () => {
+      try {
+        //const res = await getCategoryInfo(storeId);
+        const dummy = [
+          { categoryId: 1, categoryName: '신메뉴' },
+          { categoryId: 2, categoryName: '딤섬' },
+          { categoryId: 3, categoryName: '창린' },
+          { categoryId: 4, categoryName: '광동식 바베큐' },
+          { categoryId: 5, categoryName: '사이드메뉴' },
+          { categoryId: 1234, categoryName: '요청사항' },
+        ];
+        setCategories(dummy);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    const fetchMenu = async () => {
+      try {
+        //const res = await getMenuAll(storeId);
+        //setMenuData(res);
+
+        const dummy = [
+          {
+            menuId: 101, // id -> menuId
+            menuName: '탄탄지 샐러드', // name -> menuName
+            menuInfo: '국내산 닭가슴살과 고구마무스가 들어간 샐러드', // description -> menuInfo
+            menuPrice: 8600, // price -> menuPrice
+            menuPicture: mandooSvg, // imgUrl -> menuPicture
+            category: {
+              categoryId: 1,
+              categoryName: '신메뉴',
+            },
+          },
+          {
+            menuId: 102,
+            menuName: '탕신 딤섬',
+            menuInfo:
+              '새우와 돼지고기를 넣고 만든 딤섬으로 부드럽고 쫄깃한 식감이 일품',
+            menuPrice: 8000,
+            menuPicture: mandooSvg,
+            category: {
+              categoryId: 2,
+              categoryName: '딤섬',
+            },
+          },
+          {
+            menuId: 3,
+            menuName: '딘타이펑 딤섬',
+            menuInfo: '새우와 돼지고기를 넣고 만든 딤섬',
+            menuPrice: 8000,
+            menuPicture: mandooSvg,
+            category: {
+              categoryId: 2,
+              categoryName: '딤섬',
+            },
+          },
+          {
+            menuId: 4,
+            menuName: '딘타이펑 딤섬',
+            menuInfo: '새우와 돼지고기를 넣고 만든 딤섬',
+            menuPrice: 8000,
+            menuPicture: mandooSvg,
+            category: {
+              categoryId: 2,
+              categoryName: '딤섬',
+            },
+          },
+          {
+            menuId: 5,
+            menuName: '딘타이펑 딤섬',
+            menuInfo: '새우와 돼지고기를 넣고 만든 딤섬',
+            menuPrice: 8000,
+            menuPicture: mandooSvg,
+            category: {
+              categoryId: 2,
+              categoryName: '딤섬',
+            },
+          },
+          {
+            menuId: 6,
+            menuName: '딘타이펑 딤섬',
+            menuInfo: '새우와 돼지고기를 넣고 만든 딤섬',
+            menuPrice: 8000,
+            menuPicture: mandooSvg,
+            category: {
+              categoryId: 2,
+              categoryName: '딤섬',
+            },
+          },
+          {
+            menuId: 7,
+            menuName: '딘타이펑 딤섬',
+            menuInfo: '새우와 돼지고기를 넣고 만든 딤섬',
+            menuPrice: 8000,
+            menuPicture: mandooSvg,
+            category: {
+              categoryId: 2,
+              categoryName: '딤섬',
+            },
+          },
+          {
+            menuId: 8,
+            menuName: '딘타이펑 딤섬',
+            menuInfo:
+              '새우와 돼지고기를 넣고 만든 딤섬으로 부드럽고 쫄깃한 식감이 일품',
+            menuPrice: 8000,
+            menuPicture: mandooSvg,
+            category: {
+              categoryId: 2,
+              categoryName: '딤섬',
+            },
+          },
+          {
+            menuId: 9,
+            menuName: '창린 요리',
+            menuInfo: '전통 창린 스타일 요리',
+            menuPrice: 12000,
+            menuPicture: mandooSvg,
+            category: {
+              categoryId: 3,
+              categoryName: '창린',
+            },
+          },
+          {
+            menuId: 10,
+            menuName: '차슈',
+            menuInfo: '광동식 바베큐 돼지고기',
+            menuPrice: 15000,
+            menuPicture: mandooSvg,
+            category: {
+              categoryId: 4,
+              categoryName: '광동식 바베큐',
+            },
+          },
+          {
+            menuId: 11,
+            menuName: '만두',
+            menuInfo: '집에서 만든 수제 만두',
+            menuPrice: 6000,
+            menuPicture: mandooSvg,
+            category: {
+              categoryId: 5,
+              categoryName: '사이드메뉴',
+            },
+          },
+          {
+            menuId: 12,
+            menuName: '물티슈',
+            menuInfo: '한라산 고급 물티슈 제공해드림',
+            menuPrice: 0,
+            menuPicture: mandooSvg,
+            category: {
+              categoryId: 1234,
+              categoryName: '요청사항',
+            },
+          },
+        ];
+        setMenuData(dummy);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchCategory();
+    fetchMenu();
+  }, []);
 
   // 각 카테고리 섹션에 대한 ref 생성
   const sectionRefs = useRef([]);
@@ -105,7 +288,7 @@ const MenuPage = () => {
 
   // 메뉴 데이터를 카테고리별로 그룹화
   const getMenusByCategory = (categoryId) => {
-    return menuData.filter(menu => menu.category.categoryId === categoryId);
+    return menuData.filter((menu) => menu.category.categoryId === categoryId);
   };
 
   return (
@@ -129,37 +312,35 @@ const MenuPage = () => {
           {categories.map((category, index) => {
             //해당 카테고리 메뉴만 필터링하기로 수정
             const categoryMenus = getMenusByCategory(category.categoryId);
-            
+
             return (
-            //categoryId를 key로 사용
-            <Fragment key={category.categoryId}>
-              {/* index가 0보다 클 때만 (즉, 두 번째 카테고리부터) 구분선 추가 */}
-              {index > 0 && <CategorySpacer />}
-              <CategorySection ref={sectionRefs.current[index]}>
-                {/*카테고리 이름으로 수정*/}
-                <CategoryTitle>{category.categoryName}</CategoryTitle>
-              </CategorySection>
-              {/*필터링된 메뉴 목록*/}
-              {categoryMenus.map((menu) => (
-                <MenuItem
-                  key={menu.menuId}
-                  menu={menu}
-                  onClick={() => handleMenuClick(menu)}
-                />
-              ))}
-            </Fragment>
+              // key는 고유해야 하므로
+              //categoryId를 key로 사용
+              <Fragment key={category.categoryId}>
+                {/* index가 0보다 클 때만 (즉, 두 번째 카테고리부터) 구분선 추가 */}
+                {index > 0 && <CategorySpacer />}
+                <CategorySection ref={sectionRefs.current[index]}>
+                  {/*카테고리 이름으로 수정*/}
+                  <CategoryTitle>{category.categoryName}</CategoryTitle>
+                </CategorySection>
+                {/*필터링된 메뉴 목록*/}
+                {categoryMenus.map((menu) => (
+                  <MenuItem
+                    key={menu.menuId}
+                    menu={menu}
+                    onClick={() => handleMenuClick(menu)}
+                  />
+                ))}
+              </Fragment>
             );
           })}
         </MainContent>
       </ScrollableContent>
-      <AIButton 
-        onClick={handleAIChat}
-        $hasCartItems={cartItems.length > 0}
-      >
+      <AIButton onClick={handleAIChat} isCartVisible={totalPrice > 0}>
         AI 챗봇
         <AiIcon />
       </AIButton>
-      {cartItems.length > 0 && (
+      {totalPrice > 0 && (
         <FullBottomButton onClick={handleOrder}>
           장바구니 · {totalPrice.toLocaleString()}원
         </FullBottomButton>
@@ -208,7 +389,7 @@ const CategorySection = styled.section`
 `;
 
 const CategoryTitle = styled.h2`
-  ${display_medium}
+  ${title_large}
   flex: 1 0 0;
   color: var(--black);
   margin: 0.25rem 0 0;
@@ -222,7 +403,7 @@ const CategorySpacer = styled.div`
 `;
 
 const AIButton = styled.button`
-  ${display_medium}
+  ${title_large}
   display: flex;
   padding: 0.625rem 0.75rem;
   align-items: center;
@@ -233,6 +414,8 @@ const AIButton = styled.button`
   color: var(--white);
   cursor: pointer;
   position: absolute;
+  bottom: ${(props) => (props.isCartVisible ? '5.75rem' : '1.25rem')};
+  transition: bottom 0.3s ease-in-out;
   right: 1rem;
 
   bottom: ${props => props.$hasCartItems ? 'calc(4rem + 1.25rem + 0.5rem)' : '1.25rem'};

@@ -6,7 +6,7 @@ import {
   display_large,
   body_medium,
   body_large,
-  display_small
+  title_medium
 } from "../../styles/font"; 
 
 import Notice from '../../assets/icon/notice-icon.svg?react';
@@ -119,7 +119,7 @@ const StoreColumn = styled.div`
 
 const TableText = styled.div`
   color: var(--gray500);
-  ${body_large};
+  ${title_medium};
 `;
 
 const MainInfoRow = styled.div`
@@ -145,7 +145,7 @@ const LangButton = styled.button`
   align-items: center;
   color: var(--black);
   cursor: pointer;
-  ${body_medium};
+  ${title_medium};
 `;
 
 const LangText = styled.span`
@@ -180,7 +180,7 @@ const LangDropdownItem = styled.li`
   color: ${({ $selected }) => ($selected ? "var(--secondary)" : "var(--black)")};
   background: ${({ $selected }) => ($selected ? "var(--gray100)" : "var(--background)")};
   cursor: pointer;
-  ${body_medium};
+  ${body_large};
 
   &:hover {
     background: var(--gray100);
@@ -194,7 +194,7 @@ const OrderBtn = styled.button`
   border-radius: 0.625rem;
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
-  ${body_large};
+  ${title_medium};
   padding: 0.62rem;
 
   display: flex;
@@ -219,5 +219,5 @@ const BellIcon = styled.span`
 
 const NoticeText = styled.div`
   color: var(--black);
-  ${display_small};
+  ${body_medium};
 `;
