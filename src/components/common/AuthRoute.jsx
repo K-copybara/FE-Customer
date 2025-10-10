@@ -7,13 +7,11 @@ function AuthRoute() {
 
   useEffect(() => {
     if (!expiresAt) return;
-    const remaining = expiresAt - Date.now();
+    const remaining = new Date(expiresAt) - Date.now();
     if (remaining <= 0) {
       clearUser();
       return;
     }
-    const id = setTimeout(() => clearUser(), remaining);
-    return () => clearTimeout(id);
   }, [expiresAt, clearUser]);
 
   if (!customerKey) {

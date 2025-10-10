@@ -20,9 +20,14 @@ const EntryPage = () => {
         const storeId = atob(storeParam);
         const tableId = atob(tableParam);
 
-        const res = await getCustomerKey(storeId, tableId);
-
-        setUser(res);
+        //const res = await getCustomerKey(storeId, tableId);
+        //setUser(res);
+        setUser({
+          storeId: 1,
+          tableId: 3,
+          customerKey: 'cust-17246c9c-e585-4dfa-9183-84f654a259cc',
+          expiresAt: '2025-10-11T03:00:00.794729',
+        });
         navigate('/', { replace: true });
       };
 
