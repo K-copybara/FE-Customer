@@ -3,18 +3,16 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useUserStore } from '../../store/useUserStore';
 
 function AuthRoute() {
-  const { customerKey, expiry, clearUser } = useUserStore();
+  const { customerKey, expiresAt, clearUser } = useUserStore();
 
   useEffect(() => {
-    if (!expiry) return;
-    const remaining = expiry - Date.now();
+    if (!expiresAt) return;
+    const remaining = new Date(expiresAt) - Date.now();
     if (remaining <= 0) {
       clearUser();
       return;
     }
-    const id = setTimeout(() => clearUser(), remaining);
-    return () => clearTimeout(id);
-  }, [expiry, clearUser]);
+  }, [expiresAt, clearUser]);
 
   if (!customerKey) {
     return <Navigate to="/entry" replace />;

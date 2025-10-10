@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import {
@@ -15,28 +15,38 @@ import { storeInfo } from '../../store/dummyStore';
 import Amountplus from '../../assets/icon/amountplus-icon.svg?react';
 import Amountminus from '../../assets/icon/amountminus-icon.svg?react';
 import Delete from '../../assets/icon/delete-icon.svg?react';
+import { getCartData } from '../../api/cart';
+import { useUserStore } from '../../store/useUserStore';
 
 const CartPage = () => {
   const navigate = useNavigate();
-  const { fetchCart, items, cartId, totalPrice, customerKey } = useCartStore(); //clearCart삭제
+  const { storeId, tableId, customerKey } = useUserStore();
+  // const { fetchCart, items, cartId, totalPrice, customerKey } = useCartStore(); //clearCart삭제
+  const [cartData, setCartData] = useState({});
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [requestText, setRequestText] = useState('');
   const [tempRequestText, setTempRequestText] = useState('');
 
+  useEffect(() => {
+    const fetchCart = async () => {
+      const res = await getCartData(storeId, customerKey);
+      setCartData(res);
+    };
+    fetchCart();
+  }, []);
+
   // 결제위젯 관련 state
   const handleQuantityChange = (id, change) => {
-    const item = items.find((item) => item.id === id);
+    const item = cartData.items.find((item) => item.id === id);
     console.log('수량변경', change);
     if (item) {
       //장바구니 수량 변경 api
-      fetchCart();
     }
   };
 
   const handleRemoveItem = (cartItemId) => {
     //장바구니 삭제 api
     console.log('삭제', cartItemId);
-    fetchCart();
   };
 
   const handleRequestComplete = () => {
@@ -51,7 +61,7 @@ const CartPage = () => {
 
   //요청사항이랑 메뉴 아이템  기준으로 분리
   const separateItems = () => {
-    const requestItems = items.filter(
+    const requestItems = cartData.items.filter(
       (item) =>
         item.category?.categoryId === 99 && item.menuName === '요청사항',
     );
@@ -111,8 +121,8 @@ const CartPage = () => {
 
       const sendRequestOnly = async (requestItems, requestNote) => {
         const requestBody = {
-          storeId: storeInfo.storeId || 1,
-          customerKey: customerKey, //useCartStore에서 가져왔음..맞는지 모르겠
+          storeId: storeId,
+          customerKey: customerKey,
           requestNote: requestNote || null,
           items: requestItems.map((item) => ({
             menuId: item.menuId,
@@ -126,7 +136,7 @@ const CartPage = () => {
         const mockResponse = {
           data: {
             orderRequestId: 1,
-            storeId: storeInfo.storeId,
+            storeId: storeId,
             customerKey: customerKey,
             requestNote: requestNote || null,
             items: requestItems.map((item, index) => ({
@@ -158,8 +168,8 @@ const CartPage = () => {
 
       const requestBody = {
         cartId: cartId || 1234,
-        storeId: storeInfo.storeId || 'store_123',
-        tableId: storeInfo.tableId || 'table_1', // tableNumber를 tableId로 사용
+        storeId: storeId || 'store_123',
+        tableId: tableId || 'table_1', // tableNumber를 tableId로 사용
         ...(trimmedRequestText && { requestNote: trimmedRequestText }),
       };
 
@@ -237,7 +247,7 @@ const CartPage = () => {
           <TableInfo>{storeInfo.tableId}번 테이블</TableInfo>
         </StoreInfo>
 
-        {items.length === 0 ? (
+        {cartData.items.length === 0 ? (
           <EmptyCartContent>
             <EmptyMessage>메뉴를 담아주세요</EmptyMessage>
             <EmptyButton onClick={() => navigate('/')}>
@@ -246,10 +256,10 @@ const CartPage = () => {
           </EmptyCartContent>
         ) : (
           <>
-            <OrderCount>총 {items.length}건</OrderCount>
+            <OrderCount>총 {cartData.items.length}건</OrderCount>
 
             <CartItems>
-              {items.map((item) => (
+              {cartData.items.map((item) => (
                 <CartItem key={item.menuId}>
                   <ItemRow>
                     <ItemImage src={item.menuPicture} alt={item.menuName} />
@@ -308,7 +318,7 @@ const CartPage = () => {
       </Content>
 
       {/* 결제하기 or 요청사항 전달하기 */}
-      {items.length > 0 && (
+      {cartData.items.length > 0 && (
         <FullBottomButton onClick={handleOrder}>
           {(() => {
             const { requestItems, menuItems } = separateItems();
