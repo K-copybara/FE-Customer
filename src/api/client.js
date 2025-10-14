@@ -10,7 +10,10 @@ export const client = axios.create({
 
 export const getCustomerKey = async (storeId, tableId) => {
   try {
-    const res = await client.post('api/customer/session', { storeId, tableId });
+    const res = await client.post('/order/api/customer/session', {
+      storeId,
+      tableId,
+    });
     return res.data.data;
   } catch (err) {
     console.error(err);
