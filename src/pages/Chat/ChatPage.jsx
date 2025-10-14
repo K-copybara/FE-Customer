@@ -129,7 +129,7 @@ const ChatPage = () => {
           try {
             const newChat = JSON.parse(message.body);
             setMessageList((prev) => [...prev, newChat]);
-            scrollToBottom();
+            setIsLoading(false);
           } catch (error) {
             console.error('구독 에러 : ', error);
           }
@@ -164,6 +164,7 @@ const ChatPage = () => {
           body: payload,
         });
         setMessage('');
+        setIsLoading(true);
       } catch (err) {
         alert('메세지 전송 실패');
         console.error(err);
@@ -178,7 +179,11 @@ const ChatPage = () => {
   return (
     <Container>
       <PageHeader title={'Semini'} onClick={() => navigate(-1)} />
-      <ChatContainer messageList={messageList} bottomRef={bottomRef} />
+      <ChatContainer
+        messageList={messageList}
+        bottomRef={bottomRef}
+        isLoading={isLoading}
+      />
       <InputContainer
         message={message}
         setMessage={setMessage}
