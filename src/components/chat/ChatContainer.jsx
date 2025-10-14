@@ -35,7 +35,6 @@ export const ChatContainer = ({
   };
 
   const grouped = groupMessages(messageList);
-  console.log(grouped);
 
   return (
     <Container ref={scrollRef}>

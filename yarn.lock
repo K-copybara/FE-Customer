@@ -686,6 +686,11 @@
   resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.27.8.tgz#6667fac16c436b5434a387a34dedb013198f6e6e"
   integrity sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==
 
+"@stomp/stompjs@^7.2.1":
+  version "7.2.1"
+  resolved "https://registry.yarnpkg.com/@stomp/stompjs/-/stompjs-7.2.1.tgz#ca29522e1da78539e468bf99dc54b4bdb7fea858"
+  integrity sha512-DLd/WeicnHS5SsWWSk3x6/pcivqchNaEvg9UEGVqAcfYEBVmS9D6980ckXjTtfpXLjdLDsd96M7IuX4w7nzq5g==
+
 "@svgr/babel-plugin-add-jsx-attribute@8.0.0":
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/@svgr/babel-plugin-add-jsx-attribute/-/babel-plugin-add-jsx-attribute-8.0.0.tgz#4001f5d5dd87fa13303e36ee106e3ff3a7eb8b22"
