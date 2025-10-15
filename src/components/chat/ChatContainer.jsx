@@ -10,9 +10,7 @@ export const ChatContainer = ({ messageList, bottomRef, isLoading }) => {
       return [];
     }
 
-    const sortedData = [...chatData].reverse(); //데이터가 최신순으로 오는 경우
-
-    const grouped = sortedData.reduce((acc, current) => {
+    const grouped = chatData.reduce((acc, current) => {
       const lastGroup = acc[acc.length - 1];
 
       if (!lastGroup || current.role !== lastGroup.role) {

@@ -2,7 +2,7 @@ import { client } from './client';
 
 export const postChatSession = async (data) => {
   try {
-    const res = await client.post(`/chat/api/customer/chat/session`, data);
+    const res = await client.post(`/chatbot/api/customer/chat/session`, data);
     return res.data.data;
   } catch (err) {
     throw err;
@@ -12,7 +12,7 @@ export const postChatSession = async (data) => {
 export const getChatList = async (sessionId) => {
   try {
     const res = await client.get(
-      `/chat/api/customer/chat/session/${sessionId}/messages`,
+      `/chatbot/api/customer/chat/session/${sessionId}/messages`,
     );
     return res.data.data;
   } catch (err) {

@@ -8,7 +8,8 @@ function AuthRoute() {
   useEffect(() => {
     if (!expiresAt) return;
     const remaining = new Date(expiresAt) - Date.now();
-    if (remaining <= 0) {
+    console.log(remaining);
+    if (remaining <= -32400000) {
       clearUser();
       return;
     }
