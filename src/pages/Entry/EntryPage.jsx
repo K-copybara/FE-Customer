@@ -17,17 +17,12 @@ const EntryPage = () => {
 
     if (storeParam && tableParam) {
       const fetchCustomerKey = async () => {
-        const storeId = atob(storeParam);
-        const tableId = atob(tableParam);
+        const storeId = Number(atob(storeParam));
+        const tableId = Number(atob(tableParam));
 
-        //const res = await getCustomerKey(storeId, tableId);
-        //setUser(res);
-        setUser({
-          storeId: 1,
-          tableId: 3,
-          customerKey: 'cust-17246c9c-e585-4dfa-9183-84f654a259cc',
-          expiresAt: '2025-10-15T03:00:00.794729',
-        });
+        const res = await getCustomerKey(storeId, tableId);
+        setUser(res);
+
         navigate('/', { replace: true });
       };
 
