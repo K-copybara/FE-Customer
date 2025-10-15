@@ -5,7 +5,7 @@ import { body_medium, body_small } from '../../styles/font';
 export const AIMessage = ({ msg }) => {
   return (
     <Container>
-      <Text>{msg.content}</Text>
+      <Text>{msg.content.replace(/\\n/g, '\n')}</Text>
       <Time>{extractTime(msg.sentAt)}</Time>
     </Container>
   );
@@ -29,6 +29,7 @@ const Text = styled.div`
   border-radius: 0.625rem 0.625rem 0.625rem 0;
   border: 1px solid var(--Secondary, #8298ff);
   background: #fff;
+  white-space: pre-line;
   ${body_medium}
 `;
 

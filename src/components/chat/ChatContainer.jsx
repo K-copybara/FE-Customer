@@ -2,21 +2,15 @@ import styled from 'styled-components';
 import SEMINI from '../../assets/semini.svg?react';
 import { UserMessage } from './UserMessage';
 import { AIMessage } from './AIMessage';
+import { LoadingChat } from './LoadingChat';
 
-export const ChatContainer = ({
-  messageList,
-  topRef,
-  bottomRef,
-  scrollRef,
-}) => {
+export const ChatContainer = ({ messageList, bottomRef, isLoading }) => {
   const groupMessages = (chatData) => {
     if (!chatData || chatData.length === 0) {
       return [];
     }
 
-    const sortedData = [...chatData].reverse(); //데이터가 최신순으로 오는 경우
-
-    const grouped = sortedData.reduce((acc, current) => {
+    const grouped = chatData.reduce((acc, current) => {
       const lastGroup = acc[acc.length - 1];
 
       if (!lastGroup || current.role !== lastGroup.role) {
@@ -35,12 +29,9 @@ export const ChatContainer = ({
   };
 
   const grouped = groupMessages(messageList);
-  console.log(grouped);
 
   return (
-    <Container ref={scrollRef}>
-      <div ref={topRef} />
-
+    <Container>
       {grouped.map((chatGroup, idx) =>
         chatGroup.role === 'BOT' ? (
           <Wrapper>
@@ -59,6 +50,15 @@ export const ChatContainer = ({
           </ChatGroup>
         ),
       )}
+      {isLoading && (
+        <Wrapper>
+          <AIcon />
+          <ChatGroup>
+            <LoadingChat />
+          </ChatGroup>
+        </Wrapper>
+      )}
+
       <div ref={bottomRef} />
     </Container>
   );
