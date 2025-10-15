@@ -2,7 +2,7 @@ import { client } from './client';
 
 export const postRequest = async (data) => {
   try {
-    const res = await client.post(`/api/customer/order-request`, data);
+    const res = await client.post(`/order/api/customer/order-request`, data);
     return res.data.data;
   } catch (err) {
     throw err;
@@ -12,7 +12,7 @@ export const postRequest = async (data) => {
 export const getOrderHistory = async (customerKey) => {
   try {
     const res = await client.get(
-      `/api/customer/orders?customerKey=${customerKey}`,
+      `/order/api/customer/orders?customerKey=${customerKey}`,
     );
     return res.data.data;
   } catch (err) {
@@ -22,7 +22,7 @@ export const getOrderHistory = async (customerKey) => {
 
 export const postPaymentConfirm = async (data) => {
   try {
-    const res = await client.post(`/v1/payments/confirm`, data);
+    const res = await client.post(`/order/v1/payments/confirm`, data);
     return res.data.data;
   } catch (err) {
     throw err;
@@ -31,7 +31,7 @@ export const postPaymentConfirm = async (data) => {
 
 export const postPaymentPrepare = async (data) => {
   try {
-    const res = await client.post(`/v1/payments/prepare`, data);
+    const res = await client.post(`/order/v1/payments/prepare`, data);
     return res.data.data;
   } catch (err) {
     throw err;
