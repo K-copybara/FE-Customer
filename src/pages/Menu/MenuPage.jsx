@@ -19,7 +19,7 @@ import { useUserStore } from '../../store/useUserStore';
 import { getCartData } from '../../api/cart';
 
 const MenuPage = () => {
-  const { storeId, tableId, customerKey } = useUserStore();
+  const { storeId, tableId, customerKey, setStoreName } = useUserStore();
   const navigate = useNavigate();
 
   const [selectedCategory, setSelectedCategory] = useState(0);
@@ -33,6 +33,7 @@ const MenuPage = () => {
       try {
         const res = await getStoreInfo(storeId, tableId);
         setStoreInfo(res);
+        setStoreName(res.shopName);
       } catch (err) {
         console.error(err);
       }

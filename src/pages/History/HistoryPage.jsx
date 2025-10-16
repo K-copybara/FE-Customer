@@ -2,7 +2,13 @@ import React, { useEffect, useState } from 'react';
 import PageHeader from '../../components/common/PageHeader';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { display_medium, body_large, body_medium, title_large, title_medium } from '../../styles/font';
+import {
+  display_medium,
+  body_large,
+  body_medium,
+  title_large,
+  title_medium,
+} from '../../styles/font';
 import { storeInfo } from '../../store/dummyStore';
 
 import ReviewIcon from '../../assets/icon/review-icon.svg?react';

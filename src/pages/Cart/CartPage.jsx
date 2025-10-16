@@ -12,17 +12,15 @@ import FullBottomButton from '../../components/common/FullBottomButton';
 import PageHeader from '../../components/common/PageHeader';
 import { storeInfo } from '../../store/dummyStore';
 
-import Amountplus from '../../assets/icon/amountplus-icon.svg?react';
-import Amountminus from '../../assets/icon/amountminus-icon.svg?react';
-import Delete from '../../assets/icon/delete-icon.svg?react';
-import { getCartData } from '../../api/cart';
+import { deleteCart, getCartData, patchCart } from '../../api/cart';
 import { useUserStore } from '../../store/useUserStore';
+import { CartItem } from '../../components/cart/CartItem';
 
 const CartPage = () => {
   const navigate = useNavigate();
-  const { storeId, tableId, customerKey } = useUserStore();
-  // const { fetchCart, items, cartId, totalPrice, customerKey } = useCartStore(); //clearCart삭제
-  const [cartData, setCartData] = useState({});
+  const { storeId, storeName, tableId, customerKey } = useUserStore();
+  const [cartData, setCartData] = useState(null);
+  const [refresh, setRefresh] = useState(0);
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [requestText, setRequestText] = useState('');
   const [tempRequestText, setTempRequestText] = useState('');
@@ -33,20 +31,47 @@ const CartPage = () => {
       setCartData(res);
     };
     fetchCart();
-  }, []);
+  }, [refresh]);
 
-  // 결제위젯 관련 state
-  const handleQuantityChange = (id, change) => {
-    const item = cartData.items.find((item) => item.id === id);
-    console.log('수량변경', change);
-    if (item) {
-      //장바구니 수량 변경 api
+  // 장바구니 수량 변경
+  const handleQuantityChange = async (id, amount) => {
+    setCartData((prev) => {
+      const updatedItems = prev.items.map((item) =>
+        item.cartItemId === id ? { ...item, amount } : item,
+      );
+      const updatedTotalPrice = updatedItems.reduce(
+        (sum, item) => sum + item.price * item.amount,
+        0,
+      );
+      return { ...prev, items: updatedItems, totalPrice: updatedTotalPrice };
+    });
+    try {
+      await patchCart(id, { amount });
+    } catch (err) {
+      alert('수량 변경 실패. 다시 시도해주세요.');
+      setRefresh((r) => r + 1);
+      console.error(err);
     }
   };
 
-  const handleRemoveItem = (cartItemId) => {
-    //장바구니 삭제 api
-    console.log('삭제', cartItemId);
+  const handleRemoveItem = async (cartItemId) => {
+    setCartData((prev) => {
+      const updatedItems = prev.items.filter(
+        (item) => item.cartItemId !== cartItemId,
+      );
+      const updatedTotalPrice = updatedItems.reduce(
+        (sum, item) => sum + item.price * item.amount,
+        0,
+      );
+      return { ...prev, items: updatedItems, totalPrice: updatedTotalPrice };
+    });
+    try {
+      await deleteCart(cartItemId);
+    } catch (err) {
+      alert('메뉴 삭제에 실패했습니다. 다시 시도해주세요.');
+      setRefresh((r) => r + 1);
+      console.error(err);
+    }
   };
 
   const handleRequestComplete = () => {
@@ -62,10 +87,11 @@ const CartPage = () => {
   //요청사항이랑 메뉴 아이템  기준으로 분리
   const separateItems = () => {
     const requestItems = cartData.items.filter(
-      (item) =>
-        item.category?.categoryId === 99 && item.menuName === '요청사항',
+      (item) => item.menuName === '요청사항',
     );
-    const menuItems = items.filter((item) => item.category?.categoryId !== 99);
+    const menuItems = cartData.items.filter(
+      (item) => item.category?.categoryId !== 99,
+    );
     return { requestItems, menuItems };
   };
 
@@ -240,97 +266,73 @@ const CartPage = () => {
   return (
     <Container>
       <PageHeader title="장바구니" onClick={() => navigate('/')} />
+      {cartData ? (
+        <>
+          <Content>
+            <StoreInfo>
+              <StoreTitle>{storeName}</StoreTitle>
+              <TableInfo>{tableId}번 테이블</TableInfo>
+            </StoreInfo>
 
-      <Content>
-        <StoreInfo>
-          <StoreTitle>{storeInfo.shopName}</StoreTitle>
-          <TableInfo>{storeInfo.tableId}번 테이블</TableInfo>
-        </StoreInfo>
+            {cartData.items.length === 0 ? (
+              <EmptyCartContent>
+                <EmptyMessage>메뉴를 담아주세요</EmptyMessage>
+                <EmptyButton onClick={() => navigate('/')}>
+                  메뉴 보러가기
+                </EmptyButton>
+              </EmptyCartContent>
+            ) : (
+              <>
+                <OrderCount>총 {cartData.items.length}건</OrderCount>
 
-        {cartData.items.length === 0 ? (
-          <EmptyCartContent>
-            <EmptyMessage>메뉴를 담아주세요</EmptyMessage>
-            <EmptyButton onClick={() => navigate('/')}>
-              메뉴 보러가기
-            </EmptyButton>
-          </EmptyCartContent>
-        ) : (
-          <>
-            <OrderCount>총 {cartData.items.length}건</OrderCount>
+                <CartItems>
+                  {cartData.items.map((item) => (
+                    <CartItem
+                      key={`cart-${item.menuId}`}
+                      item={item}
+                      onChangeAmount={handleQuantityChange}
+                      onRemove={handleRemoveItem}
+                    />
+                  ))}
+                </CartItems>
 
-            <CartItems>
-              {cartData.items.map((item) => (
-                <CartItem key={item.menuId}>
-                  <ItemRow>
-                    <ItemImage src={item.menuPicture} alt={item.menuName} />
-                    <ItemInfo>
-                      <ItemName>{item.menuName}</ItemName>
+                <RequestSection>
+                  {requestText ? (
+                    <RequestWithText onClick={handleRequestEdit}>
+                      <RequestLabel>요청사항</RequestLabel>
+                      <RequestContent>
+                        <RequestPreview>{requestText}</RequestPreview>
+                        <ArrowIcon>›</ArrowIcon>
+                      </RequestContent>
+                    </RequestWithText>
+                  ) : (
+                    <RequestButton onClick={() => setShowRequestModal(true)}>
+                      요청사항 추가하기
+                    </RequestButton>
+                  )}
+                </RequestSection>
+              </>
+            )}
+          </Content>
 
-                      <PriceQuantitySection>
-                        <ItemPrice>{item.price.toLocaleString()}원</ItemPrice>
-                        <QuantityControls>
-                          <QuantityButton
-                            onClick={() =>
-                              handleQuantityChange(item.cartItemId, -1)
-                            }
-                            disabled={item.amount <= 1}
-                          >
-                            <Amountminus />
-                          </QuantityButton>
-                          <QuantityDisplay>{item.amount}</QuantityDisplay>
-                          <QuantityButton
-                            onClick={() =>
-                              handleQuantityChange(item.cartItemId, 1)
-                            }
-                          >
-                            <Amountplus />
-                          </QuantityButton>
-                        </QuantityControls>
-                      </PriceQuantitySection>
-                    </ItemInfo>
-                  </ItemRow>
-                  <RemoveButton
-                    onClick={() => handleRemoveItem(item.cartItemId)}
-                  >
-                    <Delete />
-                  </RemoveButton>
-                </CartItem>
-              ))}
-            </CartItems>
-
-            <RequestSection>
-              {requestText ? (
-                <RequestWithText onClick={handleRequestEdit}>
-                  <RequestLabel>요청사항</RequestLabel>
-                  <RequestContent>
-                    <RequestPreview>{requestText}</RequestPreview>
-                    <ArrowIcon>›</ArrowIcon>
-                  </RequestContent>
-                </RequestWithText>
-              ) : (
-                <RequestButton onClick={() => setShowRequestModal(true)}>
-                  요청사항 추가하기
-                </RequestButton>
-              )}
-            </RequestSection>
-          </>
-        )}
-      </Content>
-
-      {/* 결제하기 or 요청사항 전달하기 */}
-      {cartData.items.length > 0 && (
-        <FullBottomButton onClick={handleOrder}>
-          {(() => {
-            const { requestItems, menuItems } = separateItems();
-            const hasMenuItems = menuItems.length > 0;
-            console.log('주문 처리:', { requestItems, menuItems });
-            if (hasMenuItems) {
-              return `${totalPrice.toLocaleString()}원 결제하기`;
-            } else {
-              return '요청사항 전달하기';
-            }
-          })()}
-        </FullBottomButton>
+          {/* 결제하기 or 요청사항 전달하기 */}
+          {cartData.items.length > 0 && (
+            <FullBottomButton onClick={handleOrder}>
+              {(() => {
+                const { requestItems, menuItems } = separateItems();
+                const hasMenuItems = menuItems.length > 0;
+                console.log('주문 처리:', { requestItems, menuItems });
+                if (hasMenuItems) {
+                  return `${cartData.totalPrice.toLocaleString()}원 결제하기`;
+                } else {
+                  return '요청사항 전달하기';
+                }
+              })()}
+            </FullBottomButton>
+          )}
+        </>
+      ) : (
+        <div>로딩 중...</div>
       )}
 
       {/* 요청사항 모달 */}
@@ -433,100 +435,6 @@ const TableInfo = styled.span`
 const CartItems = styled.div`
   display: flex;
   flex-direction: column;
-`;
-
-const CartItem = styled.div`
-  display: flex;
-  padding: 1.5rem 0 1.5rem 0;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border-bottom: 1px solid var(--Gray100, #fafafc);
-  position: relative;
-  &:last-child {
-    border-bottom: none;
-  }
-`;
-
-const ItemImage = styled.img`
-  width: 3.75rem;
-  height: 3.75rem;
-  border-radius: 0.625rem;
-  object-fit: cover;
-  background: var(--gray100);
-`;
-
-const ItemRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  width: 100%;
-`;
-
-const ItemInfo = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-`;
-
-const ItemName = styled.div`
-  ${title_large}
-  color: var(--black);
-`;
-
-const ItemPrice = styled.div`
-  ${title_medium}
-  color: var(--black);
-`;
-
-const QuantityControls = styled.div`
-  display: flex;
-  padding: 0.25rem 0.75rem;
-  align-items: center;
-  gap: 0.75rem;
-
-  border-radius: 0.625rem;
-  border: 1px solid var(--Gray300, #d9d9d9);
-  background: var(--white);
-`;
-
-const QuantityButton = styled.button`
-  background: none;
-  background-color: transparent;
-  border: none;
-  outline: none;
-  padding: 0;
-  margin: 0;
-  color: var(--Gray700, #717171);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
-
-const PriceQuantitySection = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-`;
-
-const QuantityDisplay = styled.span`
-  ${title_medium}
-  color: var(--black);
-`;
-
-const RemoveButton = styled.button`
-  position: absolute;
-  top: 0.5rem;
-  right: 0;
-  background: none;
-  border: none;
-  font-size: 1.25rem;
-  color: var(--gray500);
-  cursor: pointer;
 `;
 
 const RequestSection = styled.div`

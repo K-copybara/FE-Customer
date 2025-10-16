@@ -34,7 +34,7 @@ export const patchCart = async (cartItemId, data) => {
 
 export const deleteCart = async (cartItemId) => {
   try {
-    const res = await client.patch(`/order/api/customer/cart/${cartItemId}`);
+    const res = await client.delete(`/order/api/customer/cart/${cartItemId}`);
     return res.data.data;
   } catch (err) {
     throw err;

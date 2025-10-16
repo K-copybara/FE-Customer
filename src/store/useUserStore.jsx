@@ -4,6 +4,7 @@ import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 export const useUserStore = create(
   persist(
     devtools((set, get) => ({
+      storeName: null,
       storeId: null,
       tableId: null,
       customerKey: null,
@@ -19,6 +20,7 @@ export const useUserStore = create(
         return { storeId, tableId, customerKey, expiresAt };
       },
       setSessionId: (id) => set({ sessionId: id }),
+      setStoreName: (name) => set({ storeName: name }),
 
       clearUser: () => {
         set({
