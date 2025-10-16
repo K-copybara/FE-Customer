@@ -10,7 +10,11 @@ const MenuItem = ({ menu, onClick }) => {
         <Desc>{menu.menuInfo}</Desc>
         <Price>{menu.menuPrice.toLocaleString()}원</Price>
       </Info>
-      <Img src={menu.menuPicture || defaultImage} alt={menu.menuName} />
+      <Img
+        src={menu.menuPicture || defaultImage}
+        alt={menu.menuName}
+        onError={(e) => (e.target.src = defaultImage)}
+      />
     </Item>
   );
 };
