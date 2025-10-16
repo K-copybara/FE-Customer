@@ -9,86 +9,10 @@ import {
   title_large,
   title_medium,
 } from '../../styles/font';
-import { storeInfo } from '../../store/dummyStore';
 
 import ReviewIcon from '../../assets/icon/review-icon.svg?react';
-
-const dummyHistory = {
-  storeId: 1,
-  totalOrders: 3,
-  totalSpent: 3,
-  orders: [
-    {
-      orderId: '2',
-      totalPrice: 0,
-      requestNote: null,
-      status: 'COMPLETED',
-      createdAt: '2025-10-05T00:01:16.764796',
-      items: [
-        {
-          menuId: 101,
-          menuName: '메뉴명',
-          amount: 2,
-          price: 0,
-          totalPrice: 0,
-        },
-        {
-          menuId: 102,
-          menuName: '메뉴명',
-          amount: 1,
-          price: 0,
-          totalPrice: 0,
-        },
-      ],
-    },
-    {
-      orderId: 'cf054be8-e54c-49b2-b3f4-7eadb64db59c',
-      totalPrice: 3,
-      requestNote: '요청사항 들어달라고',
-      status: 'PENDING',
-      createdAt: '2025-10-05T00:00:51.534912',
-      items: [
-        {
-          menuId: 101,
-          menuName: '탄탄지 샐러드',
-          amount: 2,
-          price: 1,
-          totalPrice: 2,
-        },
-        {
-          menuId: 102,
-          menuName: '하가우',
-          amount: 1,
-          price: 1,
-          totalPrice: 1,
-        },
-      ],
-    },
-    {
-      orderId: '1',
-      totalPrice: 0,
-      requestNote: null,
-      status: 'PENDING',
-      createdAt: '2025-10-05T00:00:49.479736',
-      items: [
-        {
-          menuId: 101,
-          menuName: '메뉴명',
-          amount: 2,
-          price: 0,
-          totalPrice: 0,
-        },
-        {
-          menuId: 102,
-          menuName: '메뉴명',
-          amount: 1,
-          price: 0,
-          totalPrice: 0,
-        },
-      ],
-    },
-  ],
-};
+import { useUserStore } from '../../store/useUserStore';
+import { getOrderHistory } from '../../api/order';
 
 const STATUS_MAP = {
   PENDING: '주문 접수',
@@ -97,24 +21,26 @@ const STATUS_MAP = {
 
 const HistoryPage = () => {
   const navigate = useNavigate();
+  const { storeName, storeId, tableId, customerKey } = useUserStore();
   const [orderHistory, setOrderHistory] = useState(null);
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
     const fetchOrderHistory = async () => {
       try {
-        // const res = await getOrderHistory(); // 실제 API 호출 시 사용
-        const historyData = dummyHistory; // 데이터를 변수에 할당
+        const res = await getOrderHistory(storeId, customerKey);
 
-        setOrderHistory(historyData);
-        setOrders([...(historyData.orders || [])]);
+        setOrderHistory(res);
+        setOrders(res?.orders || []);
       } catch (err) {
         console.error(err);
+        setOrderHistory({ totalOrders: 0, totalSpent: 0 });
+        setOrders([]);
       }
     };
 
     fetchOrderHistory();
-  }, []);
+  }, [customerKey]);
 
   const handleReviewClick = (order) => {
     console.log('리뷰 쓰기 버튼 클릭됨. 주문 정보:', order);
@@ -128,11 +54,11 @@ const HistoryPage = () => {
         onClick={() => navigate('/')}
         showBackButton={true}
       />
-      {orderHistory && (
+      {orderHistory ? (
         <PageContent>
           <StoreInfo>
-            <StoreTitle>{storeInfo.shopName}</StoreTitle>
-            <TableInfo>{storeInfo.tableId}번 테이블</TableInfo>
+            <StoreTitle>{storeName}</StoreTitle>
+            <TableInfo>{tableId}번 테이블</TableInfo>
           </StoreInfo>
 
           <TotalOrderInfo>
@@ -194,6 +120,8 @@ const HistoryPage = () => {
             </OrderList>
           )}
         </PageContent>
+      ) : (
+        <div>로딩 중...</div>
       )}
     </Container>
   );
