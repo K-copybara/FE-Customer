@@ -288,9 +288,6 @@ const AIButton = styled.button`
   bottom: ${(props) => (props.isCartVisible ? '5.75rem' : '1.25rem')};
   transition: bottom 0.3s ease-in-out;
   right: 1rem;
-
-  bottom: ${(props) =>
-    props.$hasCartItems ? 'calc(4rem + 1.25rem + 0.5rem)' : '1.25rem'};
   z-index: 999;
 
   svg {

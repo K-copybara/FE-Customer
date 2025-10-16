@@ -42,7 +42,7 @@ const Header = ({ shopName, tableId, notice }) => {
   return (
     <HeaderContainer>
       <TopRow>
-        <LanguageSelect ref={dropdownRef}>
+        {/* <LanguageSelect ref={dropdownRef}>
           <LangButton
             onClick={() => setDropdownOpen((v) => !v)}
             aria-haspopup="listbox"
@@ -71,7 +71,7 @@ const Header = ({ shopName, tableId, notice }) => {
               ))}
             </LangDropdown>
           )}
-        </LanguageSelect>
+        </LanguageSelect> */}
       </TopRow>
       <MainInfoRow>
         <StoreColumn>

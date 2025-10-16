@@ -13,6 +13,7 @@ import {
 import ReviewIcon from '../../assets/icon/review-icon.svg?react';
 import { useUserStore } from '../../store/useUserStore';
 import { getOrderHistory } from '../../api/order';
+import { formatDateTime } from '../../utils/formatTime';
 
 const STATUS_MAP = {
   PENDING: '주문 접수',
@@ -81,11 +82,13 @@ const HistoryPage = () => {
                   <OrderHeader>
                     <OrderStatus>{STATUS_MAP[order.status]}</OrderStatus>
                     {/* 나중에 날짜 포맷팅 함수 적용 */}
-                    <OrderTime>{order.createdAt}</OrderTime>
+                    <OrderTime>{formatDateTime(order.createdAt)}</OrderTime>
                   </OrderHeader>
 
                   <OrderItemInfo>
-                    <OrderNumberText>주문 번호 {order.orderId}</OrderNumberText>
+                    <OrderNumberText>
+                      주문 번호 {order.orderId.substr(0, 1)}
+                    </OrderNumberText>
                     {order.items.map((item) => (
                       <OrderItem key={item.menuId}>
                         <ItemName>
@@ -144,6 +147,9 @@ const PageContent = styled.div`
   overflow-y: auto;
   padding: 0 1rem 1rem 1rem;
   -webkit-overflow-scrolling: touch;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const StoreInfo = styled.div`
