@@ -1,5 +1,6 @@
-import styled from "styled-components";
-import { body_medium, display_medium, title_large } from "../../styles/font";
+import styled from 'styled-components';
+import { body_medium, display_medium, title_large } from '../../styles/font';
+import defaultImage from '../../assets/default.svg';
 
 const MenuItem = ({ menu, onClick }) => {
   return (
@@ -9,7 +10,7 @@ const MenuItem = ({ menu, onClick }) => {
         <Desc>{menu.menuInfo}</Desc>
         <Price>{menu.menuPrice.toLocaleString()}원</Price>
       </Info>
-      <Img src={menu.menuPicture} alt={menu.menuName} />
+      <Img src={menu.menuPicture || defaultImage} alt={menu.menuName} />
     </Item>
   );
 };
@@ -22,11 +23,11 @@ const Item = styled.li`
   justify-content: space-between;
   align-items: flex-start; /* 부모 컨테이너의 전체 너비 사용 */
   align-self: stretch; /* 부모 컨테이너의 전체 너비 사용 */
-  padding: 1.25rem 0; 
-  gap: 1rem; 
+  padding: 1.25rem 0;
+  gap: 1rem;
   cursor: pointer;
-  background: var(--background); 
-  border: none; 
+  background: var(--background);
+  border: none;
   box-shadow: none;
 `;
 
