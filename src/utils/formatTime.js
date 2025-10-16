@@ -23,3 +23,8 @@ export const formatDate = (dateString) => {
 export const extractTime = (datetime) => {
   return dayjs(datetime).add(9, 'hour').format('HH:mm');
 };
+
+export const formatDateTime = (isoString) => {
+  if (!isoString) return '';
+  return dayjs(isoString).format('YYYY-MM-DD HH:mm:ss');
+};

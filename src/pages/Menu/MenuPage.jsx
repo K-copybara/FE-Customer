@@ -14,27 +14,39 @@ import CategoryTabs from '../../components/common/CategoryTabs';
 import MenuItem from '../../components/common/MenuItem';
 import { useNavigate } from 'react-router-dom';
 import AiIcon from '../../assets/icon/ai-icon.svg?react';
-import { storeInfo } from '../../store/dummyStore';
-import { getCategoryInfo, getMenuAll } from '../../api/store';
+import { getCategoryInfo, getMenuAll, getStoreInfo } from '../../api/store';
 import { useUserStore } from '../../store/useUserStore';
 import { getCartData } from '../../api/cart';
-import mandooSvg from '../../assets/mandoo.svg';
 
 const MenuPage = () => {
-  const { storeId, customerKey } = useUserStore();
+  const { storeId, tableId, customerKey, setStoreName } = useUserStore();
   const navigate = useNavigate();
 
   const [selectedCategory, setSelectedCategory] = useState(0);
+  const [storeInfo, setStoreInfo] = useState({});
   const [categories, setCategories] = useState([]);
   const [menuData, setMenuData] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
 
   useEffect(() => {
+    const fetchStore = async () => {
+      try {
+        const res = await getStoreInfo(storeId, tableId);
+        setStoreInfo(res);
+        setStoreName(res.shopName);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchStore();
+  }, []);
+
+  useEffect(() => {
     const fetchCart = async () => {
       try {
-        //const res = await getCartData(storeId, customerKey);
-        //setTotalPrice(res.totalPrice);
-        setTotalPrice(2000);
+        const res = await getCartData(storeId, customerKey);
+        setTotalPrice(res.totalPrice);
       } catch (err) {
         console.error(err);
       }
@@ -46,16 +58,8 @@ const MenuPage = () => {
   useEffect(() => {
     const fetchCategory = async () => {
       try {
-        //const res = await getCategoryInfo(storeId);
-        const dummy = [
-          { categoryId: 1, categoryName: '신메뉴' },
-          { categoryId: 2, categoryName: '딤섬' },
-          { categoryId: 3, categoryName: '창린' },
-          { categoryId: 4, categoryName: '광동식 바베큐' },
-          { categoryId: 5, categoryName: '사이드메뉴' },
-          { categoryId: 1234, categoryName: '요청사항' },
-        ];
-        setCategories(dummy);
+        const res = await getCategoryInfo(storeId);
+        setCategories(res);
       } catch (err) {
         console.error(err);
       }
@@ -63,146 +67,8 @@ const MenuPage = () => {
 
     const fetchMenu = async () => {
       try {
-        //const res = await getMenuAll(storeId);
-        //setMenuData(res);
-
-        const dummy = [
-          {
-            menuId: 101, // id -> menuId
-            menuName: '탄탄지 샐러드', // name -> menuName
-            menuInfo: '국내산 닭가슴살과 고구마무스가 들어간 샐러드', // description -> menuInfo
-            menuPrice: 8600, // price -> menuPrice
-            menuPicture: mandooSvg, // imgUrl -> menuPicture
-            category: {
-              categoryId: 1,
-              categoryName: '신메뉴',
-            },
-          },
-          {
-            menuId: 102,
-            menuName: '탕신 딤섬',
-            menuInfo:
-              '새우와 돼지고기를 넣고 만든 딤섬으로 부드럽고 쫄깃한 식감이 일품',
-            menuPrice: 8000,
-            menuPicture: mandooSvg,
-            category: {
-              categoryId: 2,
-              categoryName: '딤섬',
-            },
-          },
-          {
-            menuId: 3,
-            menuName: '딘타이펑 딤섬',
-            menuInfo: '새우와 돼지고기를 넣고 만든 딤섬',
-            menuPrice: 8000,
-            menuPicture: mandooSvg,
-            category: {
-              categoryId: 2,
-              categoryName: '딤섬',
-            },
-          },
-          {
-            menuId: 4,
-            menuName: '딘타이펑 딤섬',
-            menuInfo: '새우와 돼지고기를 넣고 만든 딤섬',
-            menuPrice: 8000,
-            menuPicture: mandooSvg,
-            category: {
-              categoryId: 2,
-              categoryName: '딤섬',
-            },
-          },
-          {
-            menuId: 5,
-            menuName: '딘타이펑 딤섬',
-            menuInfo: '새우와 돼지고기를 넣고 만든 딤섬',
-            menuPrice: 8000,
-            menuPicture: mandooSvg,
-            category: {
-              categoryId: 2,
-              categoryName: '딤섬',
-            },
-          },
-          {
-            menuId: 6,
-            menuName: '딘타이펑 딤섬',
-            menuInfo: '새우와 돼지고기를 넣고 만든 딤섬',
-            menuPrice: 8000,
-            menuPicture: mandooSvg,
-            category: {
-              categoryId: 2,
-              categoryName: '딤섬',
-            },
-          },
-          {
-            menuId: 7,
-            menuName: '딘타이펑 딤섬',
-            menuInfo: '새우와 돼지고기를 넣고 만든 딤섬',
-            menuPrice: 8000,
-            menuPicture: mandooSvg,
-            category: {
-              categoryId: 2,
-              categoryName: '딤섬',
-            },
-          },
-          {
-            menuId: 8,
-            menuName: '딘타이펑 딤섬',
-            menuInfo:
-              '새우와 돼지고기를 넣고 만든 딤섬으로 부드럽고 쫄깃한 식감이 일품',
-            menuPrice: 8000,
-            menuPicture: mandooSvg,
-            category: {
-              categoryId: 2,
-              categoryName: '딤섬',
-            },
-          },
-          {
-            menuId: 9,
-            menuName: '창린 요리',
-            menuInfo: '전통 창린 스타일 요리',
-            menuPrice: 12000,
-            menuPicture: mandooSvg,
-            category: {
-              categoryId: 3,
-              categoryName: '창린',
-            },
-          },
-          {
-            menuId: 10,
-            menuName: '차슈',
-            menuInfo: '광동식 바베큐 돼지고기',
-            menuPrice: 15000,
-            menuPicture: mandooSvg,
-            category: {
-              categoryId: 4,
-              categoryName: '광동식 바베큐',
-            },
-          },
-          {
-            menuId: 11,
-            menuName: '만두',
-            menuInfo: '집에서 만든 수제 만두',
-            menuPrice: 6000,
-            menuPicture: mandooSvg,
-            category: {
-              categoryId: 5,
-              categoryName: '사이드메뉴',
-            },
-          },
-          {
-            menuId: 12,
-            menuName: '물티슈',
-            menuInfo: '한라산 고급 물티슈 제공해드림',
-            menuPrice: 0,
-            menuPicture: mandooSvg,
-            category: {
-              categoryId: 1234,
-              categoryName: '요청사항',
-            },
-          },
-        ];
-        setMenuData(dummy);
+        const res = await getMenuAll(storeId);
+        setMenuData(res);
       } catch (err) {
         console.error(err);
       }
@@ -294,11 +160,13 @@ const MenuPage = () => {
   return (
     <Layout>
       <ScrollableContent>
-        <Header
-          shopName={storeInfo.shopName}
-          tableId={storeInfo.tableId}
-          notice={storeInfo.notice}
-        />
+        {storeInfo && (
+          <Header
+            shopName={storeInfo.shopName}
+            tableId={storeInfo.tableId}
+            notice={storeInfo.notice}
+          />
+        )}
 
         <StickyTabs>
           <CategoryTabs
@@ -420,8 +288,6 @@ const AIButton = styled.button`
   bottom: ${(props) => (props.isCartVisible ? '5.75rem' : '1.25rem')};
   transition: bottom 0.3s ease-in-out;
   right: 1rem;
-
-  bottom: ${props => props.$hasCartItems ? 'calc(4rem + 1.25rem + 0.5rem)' : '1.25rem'};
   z-index: 999;
 
   svg {

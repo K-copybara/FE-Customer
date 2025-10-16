@@ -6,46 +6,36 @@ import FullBottomButton from '../../components/common/FullBottomButton';
 import Backarrow from '../../assets/icon/backarrow-icon.svg?react';
 import Amountminus from '../../assets/icon/amountminus-icon.svg?react';
 import Amountplus from '../../assets/icon/amountplus-icon.svg?react';
-
-//임시로 이미지만 가져왔듬
-import mandooSvg from '../../assets/mandoo.svg';
+import defaultImage from '../../assets/default.svg';
 import { useUserStore } from '../../store/useUserStore';
+import { getMenuDetail } from '../../api/store';
+import { postCart } from '../../api/cart';
 
 const MenuDetailPage = () => {
   const { menuId } = useParams();
   const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
   const [menuDetail, setMenuDetail] = useState();
-  const { getUser } = useUserStore();
+  const { storeId, tableId, customerKey } = useUserStore();
 
   useEffect(() => {
-    getUser();
-    const getMenuDetail = async () => {
-      //나중에 api 연결
-
-      setMenuDetail({
-        menuId: 101,
-        menuName: '탄탄지 샐러드',
-        menuPrice: 8600,
-        menuInfo: '국내산 닭가슴살과 고구마무스, 건과일이 들어간 샐러드',
-        menuPicture: mandooSvg,
-      });
+    const fetchMenu = async () => {
+      const res = await getMenuDetail(storeId, menuId);
+      setMenuDetail(res);
     };
-    getMenuDetail();
+    fetchMenu();
   }, []);
-
-  console.log('메뉴 아이디', menuId);
 
   if (!menuDetail) {
     return (
       <Container>
         <Header>
           <BackButton onClick={() => navigate('/')}>←</BackButton>
-          <HeaderTitle>메뉴를 찾을 수 없습니다</HeaderTitle>
+          <HeaderTitle></HeaderTitle>
           <div></div>
         </Header>
         <ContentSection>
-          <div>요청하신 메뉴를 찾을 수 없습니다.</div>
+          <div>로딩 중...</div>
         </ContentSection>
       </Container>
     );
@@ -61,14 +51,30 @@ const MenuDetailPage = () => {
 
   //장바구니 담기
   const handleAddToCart = async () => {
-    // 장바구니 추가 api 연결
-    navigate('/');
+    try {
+      const data = {
+        storeId,
+        tableId,
+        menuId,
+        customerKey,
+        amount: quantity,
+      };
+      const res = await postCart(data);
+      await navigate('/');
+    } catch (err) {
+      alert('장바구니 담기에 실패했습니다. 다시 시도해주세요.');
+      console.error(err);
+    }
   };
 
   return (
     <Container>
       <ImageButtonContainer>
-        <MenuImage src={menuDetail.menuPicture} alt={menuDetail.menuName} />
+        <MenuImage
+          src={menuDetail.menuPicture || defaultImage}
+          alt={menuDetail.menuName}
+          onError={(e) => (e.target.src = defaultImage)}
+        />
         <BackButton onClick={() => navigate('/')}>
           <Backarrow />
         </BackButton>
@@ -79,7 +85,7 @@ const MenuDetailPage = () => {
           <MenuDescription>{menuDetail.menuInfo}</MenuDescription>
         </MenuInfoSection>
         <PriceQuantitySection>
-          <MenuPrice>{menuDetail.menuPrice.toLocaleString()}원</MenuPrice>
+          <MenuPrice>{menuDetail.menuPrice?.toLocaleString()}원</MenuPrice>
           <QuantityControls>
             <QuantityButton
               onClick={() => handleQuantityChange(-1)}

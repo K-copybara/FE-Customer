@@ -1,19 +1,19 @@
-import React, { useState, useRef, useEffect } from "react";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useRef, useEffect } from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 import {
   display_large,
   body_medium,
   body_large,
-  title_medium
-} from "../../styles/font"; 
+  title_medium,
+} from '../../styles/font';
 
 import Notice from '../../assets/icon/notice-icon.svg?react';
 import Dropdown from '../../assets/icon/dropdown-icon.svg?react';
 import Note from '../../assets/icon/note-icon.svg?react';
 
-const LANGUAGES = ["한국어", "English"];
+const LANGUAGES = ['한국어', 'English'];
 
 const Header = ({ shopName, tableId, notice }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -27,48 +27,51 @@ const Header = ({ shopName, tableId, notice }) => {
         setDropdownOpen(false);
       }
     };
-    if (dropdownOpen) document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    if (dropdownOpen)
+      document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [dropdownOpen]);
 
-  if (!shopName || !tableId || !notice) {
-    console.warn("Header 컴포넌트: shopName, tableId, notice props를 모두 전달해야 합니다.");
+  if (!shopName || !tableId) {
+    console.warn(
+      'Header 컴포넌트: shopName, tableId,  props를 모두 전달해야 합니다.',
+    );
     return null; // 또는 기본 UI 대신 null 반환
   }
 
   return (
     <HeaderContainer>
       <TopRow>
-          <LanguageSelect ref={dropdownRef}>
-            <LangButton
-              onClick={() => setDropdownOpen((v) => !v)}
-              aria-haspopup="listbox"
-              aria-expanded={dropdownOpen}
-            >
-              <LangText>{selectedLang}</LangText>
-              <LangIcon $open={dropdownOpen}>
-                <Dropdown />
-              </LangIcon>
-            </LangButton>
-            {dropdownOpen && (
-              <LangDropdown role="listbox">
-                {LANGUAGES.map((lang) => (
-                  <LangDropdownItem
-                    key={lang}
-                    $selected={lang === selectedLang}
-                    role="option"
-                    aria-selected={lang === selectedLang}
-                    onClick={() => {
-                      setSelectedLang(lang);
-                      setDropdownOpen(false);
-                    }}
-                  >
-                    {lang}
-                  </LangDropdownItem>
-                ))}
-              </LangDropdown>
-            )}
-          </LanguageSelect>
+        {/* <LanguageSelect ref={dropdownRef}>
+          <LangButton
+            onClick={() => setDropdownOpen((v) => !v)}
+            aria-haspopup="listbox"
+            aria-expanded={dropdownOpen}
+          >
+            <LangText>{selectedLang}</LangText>
+            <LangIcon $open={dropdownOpen}>
+              <Dropdown />
+            </LangIcon>
+          </LangButton>
+          {dropdownOpen && (
+            <LangDropdown role="listbox">
+              {LANGUAGES.map((lang) => (
+                <LangDropdownItem
+                  key={lang}
+                  $selected={lang === selectedLang}
+                  role="option"
+                  aria-selected={lang === selectedLang}
+                  onClick={() => {
+                    setSelectedLang(lang);
+                    setDropdownOpen(false);
+                  }}
+                >
+                  {lang}
+                </LangDropdownItem>
+              ))}
+            </LangDropdown>
+          )}
+        </LanguageSelect> */}
       </TopRow>
       <MainInfoRow>
         <StoreColumn>
@@ -84,9 +87,7 @@ const Header = ({ shopName, tableId, notice }) => {
         <BellIcon>
           <Notice />
         </BellIcon>
-        <NoticeText>
-          {notice}
-        </NoticeText>
+        <NoticeText>{notice}</NoticeText>
       </NoticeBox>
     </HeaderContainer>
   );
@@ -94,11 +95,10 @@ const Header = ({ shopName, tableId, notice }) => {
 
 export default Header;
 
-
 const HeaderContainer = styled.div`
   width: 100%;
   background: var(--background);
-  box-sizing: border-box; 
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -158,7 +158,7 @@ const LangIcon = styled.span`
   svg {
     display: block;
   }
-  transform: ${({ $open }) => ($open ? "rotate(180deg)" : "none")};
+  transform: ${({ $open }) => ($open ? 'rotate(180deg)' : 'none')};
 `;
 
 const LangDropdown = styled.ul`
@@ -177,8 +177,10 @@ const LangDropdown = styled.ul`
 
 const LangDropdownItem = styled.li`
   padding: 0.375rem 1.125rem;
-  color: ${({ $selected }) => ($selected ? "var(--secondary)" : "var(--black)")};
-  background: ${({ $selected }) => ($selected ? "var(--gray100)" : "var(--background)")};
+  color: ${({ $selected }) =>
+    $selected ? 'var(--secondary)' : 'var(--black)'};
+  background: ${({ $selected }) =>
+    $selected ? 'var(--gray100)' : 'var(--background)'};
   cursor: pointer;
   ${body_large};
 
@@ -193,7 +195,9 @@ const OrderBtn = styled.button`
   color: var(--black);
   border-radius: 0.625rem;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
   ${title_medium};
   padding: 0.62rem;
 
