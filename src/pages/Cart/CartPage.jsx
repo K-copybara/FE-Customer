@@ -7,12 +7,15 @@ import {
   body_medium,
   title_medium,
   title_large,
+  display_large,
 } from '../../styles/font';
 import FullBottomButton from '../../components/common/FullBottomButton';
 import PageHeader from '../../components/common/PageHeader';
-import { storeInfo } from '../../store/dummyStore';
+
+import DeleteIcon from '../../assets/icon/delete-icon.svg?react';
 
 import { deleteCart, getCartData, patchCart } from '../../api/cart';
+import { postRequest, postPaymentPrepare } from '../../api/order';
 import { useUserStore } from '../../store/useUserStore';
 import { CartItem } from '../../components/cart/CartItem';
 
@@ -25,10 +28,18 @@ const CartPage = () => {
   const [requestText, setRequestText] = useState('');
   const [tempRequestText, setTempRequestText] = useState('');
 
+
+
   useEffect(() => {
     const fetchCart = async () => {
-      const res = await getCartData(storeId, customerKey);
-      setCartData(res);
+      try {
+        const res = await getCartData(storeId, customerKey);
+        setCartData(res);
+      } catch (err) {
+        console.error('장바구니 조회 실패:', err);
+        //에러가 나도 빈 장바구니로 처리
+        setCartData({ items: [], totalPrice: 0 });
+      }
     };
     fetchCart();
   }, [refresh]);
@@ -74,7 +85,14 @@ const CartPage = () => {
     }
   };
 
+  // 요청사항 완료
   const handleRequestComplete = () => {
+    // 공백만 있는지 체크
+    if (tempRequestText.trim().length === 0 && tempRequestText.length > 0) {
+      alert('요청사항을 입력해주세요.');
+      return;
+    }
+
     setRequestText(tempRequestText);
     setShowRequestModal(false);
   };
@@ -84,17 +102,66 @@ const CartPage = () => {
     setShowRequestModal(true);
   };
 
+  // 모달 닫기
+  const handleCloseModal = () => {
+    setShowRequestModal(false);
+    setTempRequestText(requestText); // 취소 시 원래 값으로 되돌림
+  };
+
+  //작성된 요청사항 삭제
+  const handleDeleteRequest = (e) => {
+  e.stopPropagation(); //모달이 열리는 것 방지
+  setRequestText('');
+  };
+
   //요청사항이랑 메뉴 아이템  기준으로 분리
   const separateItems = () => {
+    // cartData가 null이면 빈 배열 반환
+    if (!cartData || !cartData.items) {
+      return { requestItems: [], menuItems: [] };
+    }
     const requestItems = cartData.items.filter(
-      (item) => item.menuName === '요청사항',
+      (item) => item.menuCategory === '요청사항',
     );
     const menuItems = cartData.items.filter(
-      (item) => item.category?.categoryId !== 99,
+      (item) => item.menuCategory !== '요청사항',
     );
     return { requestItems, menuItems };
   };
 
+  // 요청사항만 전송하는 함수
+  const sendRequestOnly = async (requestItems, requestNote) => {
+    const requestBody = {
+      storeId: storeId,
+      tableId: tableId,
+      customerKey: customerKey,
+    };
+
+    // 요청 메모가 있으면 추가
+    if (requestNote && requestNote.trim().length > 0) {
+      requestBody.requestNote = requestNote.trim();
+    }
+
+    // 요청 아이템이 있으면 추가
+    if (requestItems && requestItems.length > 0) {
+      requestBody.items = requestItems.map((item) => ({
+        menuId: item.menuId,
+        menuName: item.menuName,
+        amount: item.amount,
+      }));
+    }
+
+    console.log('요청사항 전송:', requestBody);
+
+    try {
+      const result = await postRequest(requestBody);
+      console.log('요청사항 전송 성공:', result);
+      return result;
+    } catch (error) {
+      console.error('요청사항 전송 실패:', error);
+      throw error;
+    }
+  };
   //주문 처리
   const handleOrder = async () => {
     const { requestItems, menuItems } = separateItems();
@@ -110,73 +177,46 @@ const CartPage = () => {
     });
 
     try {
-      //메뉴 아이템이 포함된 모든 경우 → 결제 진행
+      //메뉴 아이템이 포함된 모든 경우(결제)
       if (hasMenuItems) {
         if (hasMenuItems && !hasRequestItems && !hasRequestText) {
           console.log('- 메뉴만');
         } else if (hasMenuItems && !hasRequestItems && hasRequestText) {
-          console.log('- 메뉴 + 요청사항 텍스트');
+          console.log('- 메뉴 + 요청사항 메모');
         } else if (hasMenuItems && hasRequestItems && !hasRequestText) {
           console.log('- 메뉴 + 요청사항 아이템');
         } else if (hasMenuItems && hasRequestItems && hasRequestText) {
-          console.log('- 메뉴 + 요청사항 텍스트 + 요청사항 아이템');
+          console.log('- 메뉴 + 요청사항 메모 + 요청사항 아이템');
         }
         await handlePayment();
         return;
       }
 
-      // 요청사항만 있는 경우 → 바로 완료 (결제 없음)
+      // 요청사항만 있는 경우 (결제 없음)
       if (!hasMenuItems && (hasRequestItems || hasRequestText)) {
         if (!hasMenuItems && hasRequestItems && !hasRequestText) {
-          console.log('- 요청사항 아이템만');
+          console.log('- 요청사항 아이템만'); //성공
         } else if (!hasMenuItems && !hasRequestItems && hasRequestText) {
-          console.log('- 요청사항 텍스트만');
+          console.log('- 요청사항 텍스트만'); 
         } else if (!hasMenuItems && hasRequestItems && hasRequestText) {
-          console.log('- 요청사항 아이템 + 요청사항 텍스트');
+          console.log('- 요청사항 아이템 + 요청사항 텍스트'); //성공
         }
 
-        await sendRequestOnly(requestItems, requestText);
+        const response = await sendRequestOnly(requestItems, requestText);
+        console.log('요청사항 전송 결과:', response);
+
         navigate('/ordercomplete', {
           state: {
             isRequestOnly: true,
             message: '요청사항이 전달되었습니다.',
+            orderNumber: response.orderRequestId,
+            requestNote: requestText,
+            items: requestItems,
+            totalPrice: 0,
           },
         });
         return;
       }
-
-      const sendRequestOnly = async (requestItems, requestNote) => {
-        const requestBody = {
-          storeId: storeId,
-          customerKey: customerKey,
-          requestNote: requestNote || null,
-          items: requestItems.map((item) => ({
-            menuId: item.menuId,
-            amount: item.amount,
-          })),
-        };
-
-        console.log('요청사항 전송:', requestBody);
-
-        // 더미 응답
-        const mockResponse = {
-          data: {
-            orderRequestId: 1,
-            storeId: storeId,
-            customerKey: customerKey,
-            requestNote: requestNote || null,
-            items: requestItems.map((item, index) => ({
-              orderRequestItemId: index + 1,
-              menuId: item.menuId,
-              amount: item.amount,
-            })),
-          },
-        };
-
-        console.log('요청사항 전송 성공:', mockResponse);
-        return mockResponse;
-      };
-
       // 예외 상황
       alert('주문할 항목이 없습니다.');
     } catch (error) {
@@ -189,61 +229,52 @@ const CartPage = () => {
   const handlePayment = async () => {
     try {
       console.log('결제 준비 API 호출 시작');
+      
+      // 결제 전 장바구니 정보 저장
+      localStorage.setItem('pendingCart', JSON.stringify({
+        items: cartData.items,
+        request: requestText,
+        totalPrice: cartData.totalPrice,
+      }));
 
       const trimmedRequestText = requestText.trim();
 
-      const requestBody = {
-        cartId: cartId || 1234,
-        storeId: storeId || 'store_123',
-        tableId: tableId || 'table_1', // tableNumber를 tableId로 사용
+      //결제준비로 보낼 데이터
+      const prepareRequestBody = {
+        cartId: cartData.cartId, 
+        storeId: storeId,        
+        tableId: tableId,       
         ...(trimmedRequestText && { requestNote: trimmedRequestText }),
       };
 
-      console.log('결제 준비 요청:', requestBody);
+      console.log('결제 준비 요청:', prepareRequestBody);
 
-      // 백엔드 결제 준비 API 호출
-      const prepareResponse = await fetch(
-        'http://localhost:8080/v1/payments/prepare',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(requestBody),
-        },
-      );
+      //결제준비 api 호출
+      const prepareData = await postPaymentPrepare(prepareRequestBody);
 
-      if (!prepareResponse.ok) {
-        throw new Error('결제 준비 실패');
-      }
-
-      //세민한테 받은  clientKey, orderId, customerKey
-      const { clientKey, orderId, customerKey } = await prepareResponse.json();
-      console.log('결제 준비 완료:', { clientKey, orderId, customerKey });
-
-      // localStorage에 주문 정보 저장 (기존 방식 유지)
+      //받은  clientKey, orderId, customerKey
+      const { clientKey, orderId, customerKey: returnedCustomerKey } = prepareData;
+      console.log('결제 준비 완료:', { clientKey, orderId, customerKey:returnedCustomerKey });
 
       //localStorage.setItem('pendingOrder', JSON.stringify(orderData));
 
-      // 토스 결제창 호출 (백엔드에서 받은 키 사용)
+      // 토스 결제창 호출
       if (typeof window.TossPayments === 'undefined') {
         alert('결제 시스템이 로딩되지 않았습니다. 페이지를 새로고침해주세요.');
         return;
       }
 
       const tossPayments = window.TossPayments(clientKey);
-      const payment = tossPayments.payment({ customerKey: customerKey });
+      const payment = tossPayments.payment({ customerKey: returnedCustomerKey });
 
       await payment.requestPayment({
         method: 'CARD',
         amount: {
           currency: 'KRW',
-          value: totalPrice,
+          value: cartData.totalPrice,
         },
         orderId: orderId, // 백엔드에서 받은 orderId
-        orderName: `${storeInfo.shopName} 주문 (${items.length}건)`,
-        customerName: '고객',
-        customerEmail: 'customer@example.com',
+        orderName: `${storeName} 주문 (${cartData.items.length}건)`,
         card: {
           useEscrow: false,
           flowMode: 'DEFAULT',
@@ -263,6 +294,22 @@ const CartPage = () => {
     }
   };
 
+  //버튼 표시 조건 및 텍스트 결정
+  const { requestItems, menuItems } = separateItems();
+  const hasRequestText = requestText.trim().length > 0;
+  const hasRequestItems = requestItems.length > 0;
+  const hasMenuItems = menuItems.length > 0;
+  
+  // 버튼을 표시할 조건
+  const showOrderButton = hasMenuItems || hasRequestItems || hasRequestText;
+
+  // 버튼 텍스트 결정
+  const buttonText = hasMenuItems
+  ? `${cartData.totalPrice.toLocaleString()}원 결제하기`
+  : hasRequestItems || hasRequestText
+  ? '요청사항 전달하기'
+  : '';
+
   return (
     <Container>
       <PageHeader title="장바구니" onClick={() => navigate('/')} />
@@ -274,36 +321,39 @@ const CartPage = () => {
               <TableInfo>{tableId}번 테이블</TableInfo>
             </StoreInfo>
 
-            {cartData.items.length === 0 ? (
-              <EmptyCartContent>
-                <EmptyMessage>메뉴를 담아주세요</EmptyMessage>
-                <EmptyButton onClick={() => navigate('/')}>
-                  메뉴 보러가기
-                </EmptyButton>
-              </EmptyCartContent>
-            ) : (
-              <>
-                <OrderCount>총 {cartData.items.length}건</OrderCount>
+                {/*장바구니가 비어있어도 UI 표시 */}
+                {cartData.items.length === 0 ? (
+                  <EmptyCartContent>
+                    <EmptyMessage>텅❗</EmptyMessage>
+                    <EmptyDescription>
+                      메뉴를 추가하거나 요청사항을 입력해주세요
+                    </EmptyDescription>
+                  </EmptyCartContent>
+                ) : (
+                  <>
+                    <OrderCount>총 {cartData.items.length}건</OrderCount>
 
-                <CartItems>
-                  {cartData.items.map((item) => (
-                    <CartItem
-                      key={`cart-${item.menuId}`}
-                      item={item}
-                      onChangeAmount={handleQuantityChange}
-                      onRemove={handleRemoveItem}
-                    />
-                  ))}
-                </CartItems>
+                    <CartItems>
+                      {cartData.items.map((item) => (
+                        <CartItem
+                          key={`cart-${item.menuId}`}
+                          item={item}
+                          onChangeAmount={handleQuantityChange}
+                          onRemove={handleRemoveItem}
+                        />
+                      ))}
+                    </CartItems>
+                  </>
+                )}
 
                 <RequestSection>
                   {requestText ? (
                     <RequestWithText onClick={handleRequestEdit}>
-                      <RequestLabel>요청사항</RequestLabel>
-                      <RequestContent>
+                        <RequestHeader>
+                          <RequestLabel>요청사항</RequestLabel>
+                          <DeleteIcon onClick={handleDeleteRequest} />
+                        </RequestHeader>
                         <RequestPreview>{requestText}</RequestPreview>
-                        <ArrowIcon>›</ArrowIcon>
-                      </RequestContent>
                     </RequestWithText>
                   ) : (
                     <RequestButton onClick={() => setShowRequestModal(true)}>
@@ -311,34 +361,22 @@ const CartPage = () => {
                     </RequestButton>
                   )}
                 </RequestSection>
-              </>
-            )}
           </Content>
 
           {/* 결제하기 or 요청사항 전달하기 */}
-          {cartData.items.length > 0 && (
+          {showOrderButton ? (
             <FullBottomButton onClick={handleOrder}>
-              {(() => {
-                const { requestItems, menuItems } = separateItems();
-                const hasMenuItems = menuItems.length > 0;
-                console.log('주문 처리:', { requestItems, menuItems });
-                if (hasMenuItems) {
-                  return `${cartData.totalPrice.toLocaleString()}원 결제하기`;
-                } else {
-                  return '요청사항 전달하기';
-                }
-              })()}
+              {buttonText}
             </FullBottomButton>
-          )}
+          ) : null}
         </>
       ) : (
         <div>로딩 중...</div>
       )}
-
       {/* 요청사항 모달 */}
       {showRequestModal && (
-        <Modal>
-          <ModalContent>
+        <Modal onClick={handleCloseModal}> 
+          <ModalContent onClick={(e) => e.stopPropagation()}> 
             <ModalHeader>
               <ModalTitle>요청사항</ModalTitle>
             </ModalHeader>
@@ -371,10 +409,15 @@ const EmptyCartContent = styled.div`
 `;
 
 const EmptyMessage = styled.p`
-  ${display_medium}
-  color: var(--gray600);
+  ${display_large}
+  color: var(--black);
   margin: 0;
   text-align: center;
+`;
+
+const EmptyDescription = styled.p`
+  ${body_medium}
+  color: var(--gray500);
 `;
 
 const EmptyButton = styled.button`
@@ -440,8 +483,7 @@ const CartItems = styled.div`
 const RequestSection = styled.div`
   padding: 0.5rem;
   display: flex;
-  justify-content: center;
-  align-items: center;
+
 `;
 
 const RequestButton = styled.button`
@@ -467,12 +509,16 @@ const RequestWithText = styled.button`
   background: var(--background);
   cursor: pointer;
   text-align: left;
+  gap: 1.25rem;
+    display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 `;
 
 const RequestLabel = styled.div`
   ${body_large}
   color: var(--gray500);
-  margin-bottom: 0.25rem;
+
 `;
 
 const RequestContent = styled.div`
@@ -484,6 +530,12 @@ const RequestContent = styled.div`
 const RequestPreview = styled.div`
   ${body_medium}
   color: var(--black);
+`;
+
+const RequestHeader= styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const ArrowIcon = styled.span`

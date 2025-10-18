@@ -11,6 +11,8 @@ import { useUserStore } from '../../store/useUserStore';
 import { getMenuDetail } from '../../api/store';
 import { postCart } from '../../api/cart';
 
+
+
 const MenuDetailPage = () => {
   const { menuId } = useParams();
   const navigate = useNavigate();
@@ -30,7 +32,9 @@ const MenuDetailPage = () => {
     return (
       <Container>
         <Header>
-          <BackButton onClick={() => navigate('/')}>←</BackButton>
+          <BackButton onClick={() => navigate('/')}>
+            <Backarrow />
+          </BackButton>
           <HeaderTitle></HeaderTitle>
           <div></div>
         </Header>
