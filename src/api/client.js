@@ -25,7 +25,7 @@ client.interceptors.response.use(
   async (error) => {
     if (error.response?.status === 401) {
       sessionStorage.removeItem('token');
-      return Promise.reject(err);
+      return Promise.reject(error);
     }
 
     return Promise.reject(error);

@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { display_medium, body_large, body_medium } from '../../styles/font';
+import { display_large, body_large, title_large, title_medium } from '../../styles/font';
 import FullBottomButton from '../../components/common/FullBottomButton';
+import Send from '../../assets/icon/send-icon.svg?react';
+
+//import { postPaymentConfirm } from '../../api/order';
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
@@ -20,35 +23,89 @@ const PaymentSuccess = () => {
     console.log('PaymentSuccess 페이지 로드:', { paymentKey, orderId, amount });
 
     if (paymentKey && orderId && amount) {
-      // 1초 후 결제 승인 요청
-      setTimeout(() => {
-        confirmPayment(paymentKey, orderId, amount);
-      }, 1000);
+      confirmPayment(paymentKey, orderId, amount);
     } else {
       setError('결제 정보가 올바르지 않습니다.');
       setIsProcessing(false);
     }
   }, [paymentKey, orderId, amount]);
 
-  // ✅ 결제 승인 API 호출
+  //order api 사용 버전(결제승인)
+  // const confirmPayment = async (paymentKey, orderId, amount) => {
+  //   try {
+  //     const requestData = {
+  //       paymentKey,
+  //       orderId,
+  //       amount: Number(amount),
+  //     };
+
+  //     console.log('결제 승인 요청:', requestData);
+
+  //     //axios client 사용
+  //     const result = await postPaymentConfirm(requestData);
+
+  //     console.log('✅ 결제 승인 완료!', result);
+
+  //     // 완료된 주문 정보 생성
+  //     const completedOrderData = {
+  //       paymentKey,
+  //       orderId,
+  //       amount: Number(amount),
+  //       paymentStatus: 'completed',
+  //       paymentData: result,
+  //       completedAt: new Date().toISOString(),
+  //     };
+
+  //     setOrderInfo(completedOrderData);
+  //     localStorage.removeItem('pendingOrder');
+
+  //   } catch (error) {
+  //     console.error('❌ 결제 승인 실패:', error);
+      
+  //         console.log('🔴 error.response:', error.response);
+  //   console.log('🔴 error.response.data:', error.response?.data);
+  //   console.log('🔴 error.response.status:', error.response?.status);
+  //   console.log('🔴 error.message:', error.message);
+    
+  //   const errorMessage = 
+  //     error.response?.data?.message || 
+  //     error.response?.data?.error || 
+  //     error.response?.data?.code ||
+  //     error.message || 
+  //     '결제 승인 중 오류가 발생했습니다.';
+      
+  //     setError(errorMessage);
+  //   } finally {
+  //     setIsProcessing(false);
+  //   }
+  // };
+
+
+  // https 사용 버전(결제승인)
   const confirmPayment = async (paymentKey, orderId, amount) => {
     try {
-      console.log('결제 승인 시작:', { paymentKey, orderId, amount });
+      const requestData = {
+          paymentKey,
+          orderId,
+          amount: Number(amount),
+        };
 
-      // 세민이한테 paymentKey, orderId, amount 보내기, 결제승인 api 호출
+      console.log('결제 승인 요청:', requestData);
+
+      //localStorage에서 장바구니 정보 가져오기
+      const pendingCart = localStorage.getItem('pendingCart');
+      const cartInfo = pendingCart ? JSON.parse(pendingCart) : null;
+
+      // paymentKey, orderId, amount 보내기, 결제승인 api 호출
       const response = await fetch(
-        'https://localhost:8080/v1/payments/confirm',
+        'https://hhatv6dqxr.apigw.ntruss.com/payment/toss-payment/v1/payments/confirm',
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            paymentKey,
-            orderId,
-            amount: Number(amount),
-          }),
-        },
+          body: JSON.stringify(requestData),
+        }
       );
 
       const result = await response.json();
@@ -57,41 +114,31 @@ const PaymentSuccess = () => {
       if (response.ok) {
         console.log('✅ 결제 승인 완료!', result);
 
-        // localStorage에서 주문 정보 가져오기
-        const pendingOrderData = localStorage.getItem('pendingOrder');
+        // 완료된 주문 정보 생성
+        const completedOrderData = {
+          paymentKey,
+          orderId,
+          amount: Number(amount),
+          paymentStatus: 'completed',
+          paymentData: result,
+          completedAt: new Date().toISOString(),
+          items: cartInfo?.items || [], 
+          request: cartInfo?.request || '', 
+        };
 
-        if (pendingOrderData) {
-          try {
-            const orderData = JSON.parse(pendingOrderData);
+        setOrderInfo(completedOrderData);
 
-            // 완료된 주문 정보 생성
-            const completedOrderData = {
-              ...orderData,
-              paymentKey,
-              paidAmount: amount,
-              chargedAmount: result.chargedAmount, // ✅ 백엔드 응답 필드
-              paymentStatus: 'completed',
-              paymentData: result,
-              message: result.message, // ✅ "결제 성공"
-              completedAt: new Date().toISOString(),
-            };
-
-            // Context의 주문 완료 처리
-            setOrderInfo(completedOrderData);
-
-            // localStorage 정리
-            localStorage.removeItem('pendingOrder');
-          } catch (parseError) {
-            console.error('localStorage 파싱 오류:', parseError);
-          }
-        }
+        // localStorage 정리 (필요시)
+        localStorage.removeItem('pendingCart');
       } else {
+        // 에러 응답 처리
         console.error('❌ 결제 승인 실패:', result);
-        setError(result.message || '결제 승인 중 오류가 발생했습니다.');
+        const errorMessage = result.message || result.error || '결제 승인 중 오류가 발생했습니다.';
+        setError(errorMessage);
       }
     } catch (error) {
       console.error('결제 승인 API 호출 오류:', error);
-      setError('서버와 통신 중 오류가 발생했습니다.');
+      setError('서버와 통신 중 오류가 발생했습니다. 다시 시도해주세요.');
     } finally {
       setIsProcessing(false);
     }
@@ -101,89 +148,98 @@ const PaymentSuccess = () => {
     navigate('/');
   };
 
-  const handleViewOrders = () => {
-    // 주문 완료 페이지가 있다면
-    navigate('/orders', { state: orderInfo });
+  const handleComplete = () => {
+    navigate('/history', { state: orderInfo });
   };
 
+  // 로딩 중
   if (isProcessing) {
     return (
       <Container>
-        <ProcessingContent>
+        <Content>
           <LoadingSpinner />
-          <ProcessingTitle>결제 승인 처리 중...</ProcessingTitle>
+          <Title>결제 승인 처리 중...</Title>
           <ProcessingText>잠시만 기다려 주세요</ProcessingText>
-        </ProcessingContent>
+        </Content>
       </Container>
     );
   }
 
+  // 에러 발생
   if (error) {
     return (
       <Container>
-        <ErrorContent>
-          <ErrorIcon>❌</ErrorIcon>
-          <ErrorTitle>결제 처리 실패</ErrorTitle>
-          <ErrorText>{error}</ErrorText>
-          <ButtonSection>
-            <FullBottomButton onClick={handleGoHome}>
-              홈으로 가기
-            </FullBottomButton>
-          </ButtonSection>
-        </ErrorContent>
+        <Content>
+          <ErrorMessage>{error}</ErrorMessage>
+          <FullBottomButton onClick={handleGoHome}>
+            메뉴로 돌아가기
+          </FullBottomButton>
+        </Content>
+      </Container>
+    );
+  }
+
+  // 주문 정보가 없는 경우
+  if (!orderInfo) {
+    return (
+      <Container>
+        <Content>
+          <ErrorMessage>주문 정보를 찾을 수 없습니다.</ErrorMessage>
+          <FullBottomButton onClick={handleGoHome}>
+            메뉴로 돌아가기
+          </FullBottomButton>
+        </Content>
       </Container>
     );
   }
 
   return (
     <Container>
-      <SuccessContent>
-        <SuccessIcon>✅</SuccessIcon>
-        <SuccessTitle>결제가 완료되었습니다!</SuccessTitle>
+      <Content>
+        <SendIcon>
+          <Send />
+        </SendIcon>
 
-        <InfoSection>
-          <InfoItem>
-            <InfoLabel>주문번호</InfoLabel>
-            <InfoValue>{orderId}</InfoValue>
-          </InfoItem>
-          <InfoItem>
-            <InfoLabel>결제금액</InfoLabel>
-            <InfoValue>{Number(amount).toLocaleString()}원</InfoValue>
-          </InfoItem>
-          {/* ✅ 백엔드 응답 정보 추가 */}
-          {orderInfo?.chargedAmount && (
-            <InfoItem>
-              <InfoLabel>실제 결제금액</InfoLabel>
-              <InfoValue>
-                {orderInfo.chargedAmount.toLocaleString()}원
-              </InfoValue>
-            </InfoItem>
-          )}
-          {orderInfo?.message && (
-            <InfoItem>
-              <InfoLabel>결제 상태</InfoLabel>
-              <InfoValue>{orderInfo.message}</InfoValue>
-            </InfoItem>
-          )}
-          {orderInfo?.storeInfo && (
-            <InfoItem>
-              <InfoLabel>매장</InfoLabel>
-              <InfoValue>{orderInfo.storeInfo.storeName}</InfoValue>
-            </InfoItem>
-          )}
-        </InfoSection>
+        <Title>결제가 완료되었습니다!</Title>
+        <OrderNumber>주문번호 {orderId}</OrderNumber>
 
-        <ButtonSection>
-          <FullBottomButton onClick={handleGoHome}>
-            홈으로 가기
-          </FullBottomButton>
-          {orderInfo && (
-            <SecondaryButton onClick={handleViewOrders}>
-              주문 내역 보기
-            </SecondaryButton>
+        <OrderSummary>
+          {/* 주문 아이템이 있는 경우 표시 */}
+          {orderInfo.items && orderInfo.items.length > 0 && (
+            <ItemsContainer>
+              {orderInfo.items.map((item, index) => (
+                <SummaryRow key={item.cartItemId || index}>
+                  <ItemName>{item.menuName}</ItemName>
+                  <ItemQuantity>{item.amount}개</ItemQuantity>
+                </SummaryRow>
+              ))}
+            </ItemsContainer>
           )}
-        </ButtonSection>
-      </SuccessContent>
+
+          {/* 총 금액 */}
+          <TotalRow>
+            <SummaryLabel>총 주문 금액</SummaryLabel>
+            <SummaryValue>
+              {Number(amount).toLocaleString()}원
+            </SummaryValue>
+          </TotalRow>
+
+          {/* 요청사항이 있는 경우 표시 */}
+          {orderInfo.request && (
+            <>
+              <Line></Line>
+              <RequestInfo>
+                <RequestTitle>요청사항</RequestTitle>
+                <RequestContent>{orderInfo.request}</RequestContent>
+              </RequestInfo>
+            </>
+          )}
+        </OrderSummary>
+      </Content>
+
+      <FullBottomButton onClick={handleComplete}>
+        주문 내역 보기
+      </FullBottomButton>
     </Container>
   );
 };
@@ -194,18 +250,131 @@ export default PaymentSuccess;
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  width: 100%;
   min-height: 100vh;
-  padding: 2rem;
   background: var(--background);
-  position: relative; //버튼 때문에 추가
+  position: relative;
 `;
 
-const ProcessingContent = styled.div`
+const Content = styled.div`
+  flex: 1;
+  padding: 7rem 1rem;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
-  max-width: 400px;
+`;
+
+const SendIcon = styled.div`
+  width: 4rem;
+  height: 4rem;
+  border-radius: 6.25rem;
+  background: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+`;
+
+const Title = styled.h1`
+  ${display_large}
+  color: var(--Black, #222);
+  margin-bottom: 0.5rem;
+`;
+
+const OrderNumber = styled.div`
+  ${title_large}
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 2rem;
+`;
+
+const OrderSummary = styled.div`
+  display: flex;
   width: 100%;
+  background: var(--gray100);
+  border-radius: 0.625rem;
+  border: 1px solid var(--Gray300, #d9d9d9);
+  padding: 1.25rem 1rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+`;
+
+const ItemsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  gap: 0.5rem;
+`;
+
+const SummaryRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  align-self: stretch;
+
+  &:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+`;
+
+const ItemName = styled.div`
+  ${body_large}
+  color: var(--black);
+`;
+
+const ItemQuantity = styled.div`
+  ${title_medium}
+  color: var(--black);
+`;
+
+const Line = styled.div`
+  border-bottom: 1px solid var(--gray300);
+  width: 100%;
+`;
+
+const TotalRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  align-self: stretch;
+  font-weight: 600;
+`;
+
+const SummaryLabel = styled.span`
+  ${body_large}
+  color: var(--black);
+`;
+
+const SummaryValue = styled.span`
+  ${title_medium}
+  color: var(--black);
+`;
+
+const RequestInfo = styled.div`
+  width: 100%;
+  text-align: left;
+`;
+
+const RequestTitle = styled.div`
+  ${title_medium}
+  color: var(--black);
+  margin-bottom: 0.5rem;
+`;
+
+const RequestContent = styled.div`
+  ${body_large}
+  color: var(--black);
+`;
+
+const ErrorMessage = styled.div`
+  ${body_large}
+  color: var(--gray700);
+  margin-bottom: 2rem;
 `;
 
 const LoadingSpinner = styled.div`
@@ -227,102 +396,8 @@ const LoadingSpinner = styled.div`
   }
 `;
 
-const ProcessingTitle = styled.h1`
-  ${display_medium}
-  color: var(--black);
-  margin-bottom: 1rem;
-`;
-
 const ProcessingText = styled.p`
   ${body_large}
   color: var(--gray600);
   margin: 0;
-`;
-
-const SuccessContent = styled.div`
-  text-align: center;
-  max-width: 400px;
-  width: 100%;
-`;
-
-const SuccessIcon = styled.div`
-  font-size: 4rem;
-  margin-bottom: 1rem;
-`;
-
-const SuccessTitle = styled.h1`
-  ${display_medium}
-  color: var(--black);
-  margin-bottom: 2rem;
-`;
-
-const InfoSection = styled.div`
-  background: var(--white);
-  border-radius: 0.625rem;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  text-align: left;
-`;
-
-const InfoItem = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-  &:last-child {
-    margin-bottom: 0;
-  }
-`;
-
-const InfoLabel = styled.span`
-  ${body_medium}
-  color: var(--gray600);
-`;
-
-const InfoValue = styled.span`
-  ${body_medium}
-  color: var(--black);
-  font-weight: 600;
-`;
-
-const ButtonSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`;
-
-const SecondaryButton = styled.button`
-  background: var(--background);
-  color: var(--primary);
-  border: 1px solid var(--primary);
-  border-radius: 0.625rem;
-  padding: 1rem;
-  ${body_large}
-  cursor: pointer;
-
-  &:hover {
-    background: var(--gray50);
-  }
-`;
-
-const ErrorContent = styled.div`
-  text-align: center;
-  max-width: 400px;
-  width: 100%;
-`;
-
-const ErrorIcon = styled.div`
-  font-size: 4rem;
-  margin-bottom: 1rem;
-`;
-
-const ErrorTitle = styled.h1`
-  ${display_medium}
-  color: var(--black);
-  margin-bottom: 1rem;
-`;
-
-const ErrorText = styled.p`
-  ${body_large}
-  color: var(--gray600);
-  margin-bottom: 2rem;
 `;
