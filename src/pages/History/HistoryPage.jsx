@@ -87,7 +87,7 @@ const HistoryPage = () => {
 
                   <OrderItemInfo>
                     <OrderNumberText>
-                      주문 번호 {order.orderId.substr(0, 1)}
+                      주문번호 {order.orderId.split('-')[0]}
                     </OrderNumberText>
                     {order.items.map((item) => (
                       <OrderItem key={item.menuId}>

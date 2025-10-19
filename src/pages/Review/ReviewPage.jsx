@@ -43,7 +43,9 @@ const ReviewPage = () => {
       />
 
       <Content>
-        <OrderNumberText>주문 번호 {order.orderId}</OrderNumberText>
+        <OrderNumberText>
+          주문번호 {order.orderId.split('-')[0]}
+        </OrderNumberText>
         <ReviewItems>
           {order.items.map((item) => (
             <ReviewItem key={item.menuId}>

@@ -19,14 +19,13 @@ const ReviewCompletePage = () => {
         <SendIcon>
           <Send />
         </SendIcon>
-        
-        <Title>리뷰가 완성되었습니다!</Title>
-        <OrderNumber>주문번호 {orderId}</OrderNumber>
 
-      
-      <FullBottomButton onClick={() => navigate('/history')}>
-        주문 내역 보기
-      </FullBottomButton>
+        <Title>리뷰가 완성되었습니다!</Title>
+        <OrderNumber>주문번호 {orderId.split('-')[0]}</OrderNumber>
+
+        <FullBottomButton onClick={() => navigate('/history')}>
+          주문 내역 보기
+        </FullBottomButton>
       </Content>
     </Container>
   );
@@ -77,4 +76,3 @@ const OrderNumber = styled.div`
   text-align: center;
   margin-bottom: 5rem;
 `;
-
