@@ -335,10 +335,8 @@ const CartPage = () => {
             {/*장바구니가 비어있어도 UI 표시 */}
             {cartData.items.length === 0 ? (
               <EmptyCartContent>
-                <EmptyMessage>텅❗</EmptyMessage>
-                <EmptyDescription>
-                  메뉴를 추가하거나 요청사항을 입력해주세요
-                </EmptyDescription>
+                <EmptyMessage>텅</EmptyMessage>
+                <EmptyDescription>메뉴를 추가해주세요</EmptyDescription>
               </EmptyCartContent>
             ) : (
               <>
