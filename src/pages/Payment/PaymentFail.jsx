@@ -9,17 +9,19 @@ const PaymentFail = () => {
   const navigate = useNavigate();
   const [errorInfo, setErrorInfo] = useState({});
 
-  const code = searchParams.get("code");
-  const message = searchParams.get("message");
-  const orderId = searchParams.get("orderId");
+  const code = searchParams.get('code');
+  const message = searchParams.get('message');
+  const orderId = searchParams.get('orderId');
 
   useEffect(() => {
     console.log('결제 실패 정보:', { code, message, orderId });
-    
+
     setErrorInfo({
       code: code || '알 수 없음',
-      message: message ? decodeURIComponent(message) : '결제 중 오류가 발생했습니다.',
-      orderId: orderId || '알 수 없음'
+      message: message
+        ? decodeURIComponent(message)
+        : '결제 중 오류가 발생했습니다.',
+      orderId: orderId || '알 수 없음',
     });
   }, [code, message, orderId]);
 
@@ -37,11 +39,11 @@ const PaymentFail = () => {
       <ErrorContent>
         <ErrorIcon>❌</ErrorIcon>
         <ErrorTitle>결제가 실패했습니다</ErrorTitle>
-        
+
         <InfoSection>
           <InfoItem>
             <InfoLabel>주문번호</InfoLabel>
-            <InfoValue>{errorInfo.orderId}</InfoValue>
+            <InfoValue>{errorInfo.orderId.split('-')[0]}</InfoValue>
           </InfoItem>
           <InfoItem>
             <InfoLabel>오류 코드</InfoLabel>
@@ -57,9 +59,7 @@ const PaymentFail = () => {
           <FullBottomButton onClick={handleRetry}>
             다시 시도하기
           </FullBottomButton>
-          <SecondaryButton onClick={handleGoHome}>
-            홈으로 가기
-          </SecondaryButton>
+          <SecondaryButton onClick={handleGoHome}>홈으로 가기</SecondaryButton>
         </ButtonSection>
       </ErrorContent>
     </Container>
@@ -138,7 +138,7 @@ const SecondaryButton = styled.button`
   padding: 1rem;
   ${body_large}
   cursor: pointer;
-  
+
   &:hover {
     background: var(--gray50);
   }

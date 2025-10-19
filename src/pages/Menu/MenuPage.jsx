@@ -28,7 +28,6 @@ const MenuPage = () => {
   const [menuData, setMenuData] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
 
-
   useEffect(() => {
     const fetchStore = async () => {
       try {
@@ -158,7 +157,6 @@ const MenuPage = () => {
     return menuData.filter((menu) => menu.category.categoryId === categoryId);
   };
 
-
   return (
     <Layout>
       <ScrollableContent>
@@ -206,22 +204,22 @@ const MenuPage = () => {
           })}
         </MainContent>
       </ScrollableContent>
-      <AIButton onClick={handleAIChat} isCartVisible={true}>
+      <AIButton onClick={handleAIChat} isCartVisible={totalPrice > 0}>
         AI 챗봇
         <AiIcon />
       </AIButton>
+      {totalPrice > 0 && (
         <FullBottomButton onClick={handleOrder}>
-          {totalPrice > 0 
-            ? `장바구니 · ${totalPrice.toLocaleString()}원`
-            : '장바구니 보기'}
+          장바구니 · {totalPrice.toLocaleString()}원
         </FullBottomButton>
+      )}
     </Layout>
   );
 };
 
 export default MenuPage;
 
-
+// 스타일 컴포넌트들은 동일...
 const Layout = styled.div`
   display: flex;
   flex-direction: column;
