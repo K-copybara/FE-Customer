@@ -6,6 +6,7 @@ import { display_large, title_large } from '../../styles/font';
 import FullBottomButton from '../../components/common/FullBottomButton';
 import StarRating from '../../components/common/StarRating';
 import PageHeader from '../../components/common/PageHeader';
+import { postReview } from '../../api/review';
 
 const ReviewPage = () => {
   const navigate = useNavigate();
@@ -26,12 +27,41 @@ const ReviewPage = () => {
     }));
   };
 
-  const handleCompleteClick = () => {
-    // 여기서 리뷰 데이터를 저장하는 로직을 호출
-    console.log('리뷰 제출:', ratings);
+  const makePayload = (items, ratingsObj) => {
+    // 누락(없거나 1 미만)된 항목 찾기
+    const missing = items.filter(
+      (it) => !(it.menuId in ratingsObj) || Number(ratingsObj[it.menuId]) < 1,
+    );
 
-    // 리뷰 완료 페이지로 이동
-    navigate('/reviewcomplete', { state: { orderId: order.orderId } });
+    if (missing.length > 0) {
+      return { error: missing.map((m) => m.menuId) };
+    }
+
+    // 요구 포맷으로 변환
+    const reviews = items.map((it) => ({
+      menuId: it.menuId,
+      score: Number(ratingsObj[it.menuId]),
+    }));
+
+    return { reviews };
+  };
+
+  const handleCompleteClick = async () => {
+    const { reviews, error } = makePayload(order.items, ratings);
+
+    if (error) {
+      alert(`모든 메뉴에 평점을 입력해주세요.`);
+      return;
+    }
+
+    const data = { reviews };
+    try {
+      const res = await postReview(order.orderId, data);
+      navigate('/reviewcomplete', { state: { orderId: order.orderId } });
+    } catch (err) {
+      console.error(err);
+      alert('리뷰 제출에 실패했습니다. 다시 시도해주세요');
+    }
   };
 
   return (
@@ -71,8 +101,6 @@ const ReviewPage = () => {
 };
 
 export default ReviewPage;
-
-// --- Styled Components ---
 
 const Container = styled.div`
   display: flex;
