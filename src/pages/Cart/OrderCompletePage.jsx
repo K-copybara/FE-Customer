@@ -1,7 +1,12 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { display_large, body_large, title_large, title_medium } from '../../styles/font';
+import {
+  display_large,
+  body_large,
+  title_large,
+  title_medium,
+} from '../../styles/font';
 import FullBottomButton from '../../components/common/FullBottomButton';
 
 import Send from '../../assets/icon/send-icon.svg?react';
@@ -32,7 +37,6 @@ const OrderCompletePage = () => {
   // 요청사항 텍스트 결정
   const requestText = orderData.request || orderData.requestNote || '';
 
-
   const handleComplete = () => {
     navigate('/history');
   };
@@ -45,48 +49,49 @@ const OrderCompletePage = () => {
         </SendIcon>
 
         <Title>
-          {orderData.isRequestOnly 
-            ? '요청사항이 전달되었습니다!' 
+          {orderData.isRequestOnly
+            ? '요청사항이 전달되었습니다!'
             : '주문이 완료되었습니다!'}
         </Title>
-        <OrderNumber>주문번호 {orderData.orderNumber}</OrderNumber>
+        <OrderNumber>
+          주문번호 {orderData.orderNumbers.split('-')[0]}
+        </OrderNumber>
 
         <OrderSummary>
-            {/* 실제 주문한 아이템들 표시 */}
-            {orderData.items && orderData.items.length > 0 && (
-              <ItemsContainer>
-                {orderData.items.map((item, index) => (
-                  <SummaryRow key={item.cartItemId || index}>
-                    <ItemName>{item.menuName}</ItemName>
-                    <ItemQuantity>{item.amount}개</ItemQuantity>
-                  </SummaryRow>
-                ))}
-              </ItemsContainer>
-            )}
+          {/* 실제 주문한 아이템들 표시 */}
+          {orderData.items && orderData.items.length > 0 && (
+            <ItemsContainer>
+              {orderData.items.map((item, index) => (
+                <SummaryRow key={item.cartItemId || index}>
+                  <ItemName>{item.menuName}</ItemName>
+                  <ItemQuantity>{item.amount}개</ItemQuantity>
+                </SummaryRow>
+              ))}
+            </ItemsContainer>
+          )}
 
-            {/* 총 금액 (요청사항만 있을 때는 표시 안 함) */}
-            {!orderData.isRequestOnly && orderData.totalPrice !== undefined && (
-              <TotalRow>
-                <SummaryLabel>총 주문 금액</SummaryLabel>
-                <SummaryValue>
-                  {orderData.totalPrice.toLocaleString()}원
-                </SummaryValue>
-              </TotalRow>
-            )}
+          {/* 총 금액 (요청사항만 있을 때는 표시 안 함) */}
+          {!orderData.isRequestOnly && orderData.totalPrice !== undefined && (
+            <TotalRow>
+              <SummaryLabel>총 주문 금액</SummaryLabel>
+              <SummaryValue>
+                {orderData.totalPrice.toLocaleString()}원
+              </SummaryValue>
+            </TotalRow>
+          )}
 
-            {/* 요청사항 */}
-            {requestText && (
-              <>
-                {((orderData.items && orderData.items.length > 0) || 
-                  (!orderData.isRequestOnly && orderData.totalPrice !== undefined)) && (
-                  <Line></Line>
-                )}
-                <RequestInfo>
-                  <RequestTitle>요청사항</RequestTitle>
-                  <RequestContent>{requestText}</RequestContent>
-                </RequestInfo>
-              </>
-            )}
+          {/* 요청사항 */}
+          {requestText && (
+            <>
+              {((orderData.items && orderData.items.length > 0) ||
+                (!orderData.isRequestOnly &&
+                  orderData.totalPrice !== undefined)) && <Line></Line>}
+              <RequestInfo>
+                <RequestTitle>요청사항</RequestTitle>
+                <RequestContent>{requestText}</RequestContent>
+              </RequestInfo>
+            </>
+          )}
         </OrderSummary>
       </Content>
 

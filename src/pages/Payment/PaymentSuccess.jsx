@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { display_large, body_large, title_large, title_medium } from '../../styles/font';
+import {
+  display_large,
+  body_large,
+  title_large,
+  title_medium,
+} from '../../styles/font';
 import FullBottomButton from '../../components/common/FullBottomButton';
 import Send from '../../assets/icon/send-icon.svg?react';
 
@@ -61,34 +66,33 @@ const PaymentSuccess = () => {
 
   //   } catch (error) {
   //     console.error('❌ 결제 승인 실패:', error);
-      
+
   //         console.log('🔴 error.response:', error.response);
   //   console.log('🔴 error.response.data:', error.response?.data);
   //   console.log('🔴 error.response.status:', error.response?.status);
   //   console.log('🔴 error.message:', error.message);
-    
-  //   const errorMessage = 
-  //     error.response?.data?.message || 
-  //     error.response?.data?.error || 
+
+  //   const errorMessage =
+  //     error.response?.data?.message ||
+  //     error.response?.data?.error ||
   //     error.response?.data?.code ||
-  //     error.message || 
+  //     error.message ||
   //     '결제 승인 중 오류가 발생했습니다.';
-      
+
   //     setError(errorMessage);
   //   } finally {
   //     setIsProcessing(false);
   //   }
   // };
 
-
   // https 사용 버전(결제승인)
   const confirmPayment = async (paymentKey, orderId, amount) => {
     try {
       const requestData = {
-          paymentKey,
-          orderId,
-          amount: Number(amount),
-        };
+        paymentKey,
+        orderId,
+        amount: Number(amount),
+      };
 
       console.log('결제 승인 요청:', requestData);
 
@@ -105,7 +109,7 @@ const PaymentSuccess = () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(requestData),
-        }
+        },
       );
 
       const result = await response.json();
@@ -122,8 +126,8 @@ const PaymentSuccess = () => {
           paymentStatus: 'completed',
           paymentData: result,
           completedAt: new Date().toISOString(),
-          items: cartInfo?.items || [], 
-          request: cartInfo?.request || '', 
+          items: cartInfo?.items || [],
+          request: cartInfo?.request || '',
         };
 
         setOrderInfo(completedOrderData);
@@ -133,7 +137,8 @@ const PaymentSuccess = () => {
       } else {
         // 에러 응답 처리
         console.error('❌ 결제 승인 실패:', result);
-        const errorMessage = result.message || result.error || '결제 승인 중 오류가 발생했습니다.';
+        const errorMessage =
+          result.message || result.error || '결제 승인 중 오류가 발생했습니다.';
         setError(errorMessage);
       }
     } catch (error) {
@@ -201,7 +206,7 @@ const PaymentSuccess = () => {
         </SendIcon>
 
         <Title>결제가 완료되었습니다!</Title>
-        <OrderNumber>주문번호 {orderId}</OrderNumber>
+        <OrderNumber>주문번호 {orderId.split('-')[0]}</OrderNumber>
 
         <OrderSummary>
           {/* 주문 아이템이 있는 경우 표시 */}
@@ -219,9 +224,7 @@ const PaymentSuccess = () => {
           {/* 총 금액 */}
           <TotalRow>
             <SummaryLabel>총 주문 금액</SummaryLabel>
-            <SummaryValue>
-              {Number(amount).toLocaleString()}원
-            </SummaryValue>
+            <SummaryValue>{Number(amount).toLocaleString()}원</SummaryValue>
           </TotalRow>
 
           {/* 요청사항이 있는 경우 표시 */}

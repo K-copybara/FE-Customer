@@ -492,6 +492,7 @@ const CartItems = styled.div`
 const RequestSection = styled.div`
   padding: 0.5rem;
   display: flex;
+  justify-content: center;
 `;
 
 const RequestButton = styled.button`
