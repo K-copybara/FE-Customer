@@ -3,7 +3,7 @@ import { client } from './client';
 export const getStoreInfo = async (storeId, tableId) => {
   try {
     const res = await client.get(
-      `/shop/api/customer/store/${storeId}?tableId=${tableId}`,
+      `/api/customer/store/${storeId}?tableId=${tableId}`,
     );
     return res.data.data;
   } catch (err) {
@@ -13,9 +13,7 @@ export const getStoreInfo = async (storeId, tableId) => {
 
 export const getCategoryInfo = async (storeId) => {
   try {
-    const res = await client.get(
-      `/shop/api/customer/store/${storeId}/categories`,
-    );
+    const res = await client.get(`/api/customer/store/${storeId}/categories`);
     return res.data.data;
   } catch (err) {
     throw err;
@@ -25,7 +23,7 @@ export const getCategoryInfo = async (storeId) => {
 export const getMenuDetail = async (storeId, menuId) => {
   try {
     const res = await client.get(
-      `/shop/api/customer/store/${storeId}/menus/${menuId}`,
+      `/api/customer/store/${storeId}/menus/${menuId}`,
     );
     return res.data.data;
   } catch (err) {
@@ -35,7 +33,7 @@ export const getMenuDetail = async (storeId, menuId) => {
 
 export const getMenuAll = async (storeId) => {
   try {
-    const res = await client.get(`/shop/api/customer/store/${storeId}/menus`);
+    const res = await client.get(`/api/customer/store/${storeId}/menus`);
     return res.data.data;
   } catch (err) {
     throw err;
