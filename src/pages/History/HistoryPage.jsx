@@ -18,6 +18,7 @@ import { formatDateTime } from '../../utils/formatTime';
 const STATUS_MAP = {
   PENDING: '주문 접수',
   COMPLETED: '주문 완료',
+  CANCELED: '주문 취소',
 };
 
 const HistoryPage = () => {
@@ -81,7 +82,6 @@ const HistoryPage = () => {
                 <OrderCard key={order.orderId}>
                   <OrderHeader>
                     <OrderStatus>{STATUS_MAP[order.status]}</OrderStatus>
-                    {/* 나중에 날짜 포맷팅 함수 적용 */}
                     <OrderTime>{formatDateTime(order.createdAt)}</OrderTime>
                   </OrderHeader>
 
