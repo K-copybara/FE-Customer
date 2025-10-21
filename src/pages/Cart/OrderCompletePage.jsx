@@ -54,7 +54,10 @@ const OrderCompletePage = () => {
             : '주문이 완료되었습니다!'}
         </Title>
         <OrderNumber>
-          주문번호 {orderData.orderNumbers.split('-')[0]}
+          주문번호{' '}
+          {orderData.isRequestOnly
+            ? orderData.orderNumber
+            : orderData.orderNumbers.split('-')[0]}
         </OrderNumber>
 
         <OrderSummary>

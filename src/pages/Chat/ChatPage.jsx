@@ -13,7 +13,7 @@ const startChat = {
   messageId: 0,
   role: 'BOT',
   content: '안녕하세요! AI 챗봇 Semini에요.\n어떻게 도와드릴까요?',
-  sentAt: new Date(),
+  sentAt: new Date().toISOString(),
 };
 
 const ChatPage = () => {
@@ -55,7 +55,7 @@ const ChatPage = () => {
 
   useEffect(() => {
     //stomp 웹소켓 연결
-    const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+    const SERVER_URL = import.meta.env.VITE_WEBSOCKET_URL;
     const stompClient = new Client({
       webSocketFactory: () => new SockJS(SERVER_URL + '/chatbot/ws/chat'),
       reconnectDelay: 5000,
@@ -98,6 +98,7 @@ const ChatPage = () => {
         customerKey,
         role: 'CUSTOMER',
         content: message,
+        sentAt: new Date().toISOString(),
       };
 
       setMessageList((prev) => [...prev, messageData]);
