@@ -13,7 +13,7 @@ const startChat = {
   messageId: 0,
   role: 'BOT',
   content: '안녕하세요! AI 챗봇 Semini에요.\n어떻게 도와드릴까요?',
-  sentAt: new Date(),
+  sentAt: new Date().toISOString(),
 };
 
 const ChatPage = () => {
@@ -98,6 +98,7 @@ const ChatPage = () => {
         customerKey,
         role: 'CUSTOMER',
         content: message,
+        sentAt: new Date().toISOString(),
       };
 
       setMessageList((prev) => [...prev, messageData]);
