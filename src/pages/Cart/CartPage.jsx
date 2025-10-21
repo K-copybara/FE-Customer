@@ -352,24 +352,24 @@ const CartPage = () => {
                     />
                   ))}
                 </CartItems>
+
+                <RequestSection>
+                  {requestText ? (
+                    <RequestWithText onClick={handleRequestEdit}>
+                      <RequestHeader>
+                        <RequestLabel>요청사항</RequestLabel>
+                        <DeleteIcon onClick={handleDeleteRequest} />
+                      </RequestHeader>
+                      <RequestPreview>{requestText}</RequestPreview>
+                    </RequestWithText>
+                  ) : (
+                    <RequestButton onClick={() => setShowRequestModal(true)}>
+                      요청사항 추가하기
+                    </RequestButton>
+                  )}
+                </RequestSection>
               </>
             )}
-
-            <RequestSection>
-              {requestText ? (
-                <RequestWithText onClick={handleRequestEdit}>
-                  <RequestHeader>
-                    <RequestLabel>요청사항</RequestLabel>
-                    <DeleteIcon onClick={handleDeleteRequest} />
-                  </RequestHeader>
-                  <RequestPreview>{requestText}</RequestPreview>
-                </RequestWithText>
-              ) : (
-                <RequestButton onClick={() => setShowRequestModal(true)}>
-                  요청사항 추가하기
-                </RequestButton>
-              )}
-            </RequestSection>
           </Content>
 
           {/* 결제하기 or 요청사항 전달하기 */}
