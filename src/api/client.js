@@ -5,12 +5,11 @@ export const client = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true,
 });
 
 export const getCustomerKey = async (storeId, tableId) => {
   try {
-    const res = await client.post('/order/api/customer/session', {
+    const res = await client.post('/api/customer/session', {
       storeId,
       tableId,
     });
