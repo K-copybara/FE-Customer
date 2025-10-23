@@ -113,12 +113,14 @@ const HistoryPage = () => {
                     </RequestContent>
                   </RequestSection>
 
-                  {order.status === 'COMPLETED' && !order.reviewed && (
-                    <ReviewButton onClick={() => handleReviewClick(order)}>
-                      <ReviewIcon />
-                      리뷰 쓰기
-                    </ReviewButton>
-                  )}
+                  {order.totalPrice > 0 &&
+                    order.status === 'COMPLETED' &&
+                    !order.reviewed && (
+                      <ReviewButton onClick={() => handleReviewClick(order)}>
+                        <ReviewIcon />
+                        리뷰 쓰기
+                      </ReviewButton>
+                    )}
                 </OrderCard>
               ))}
             </OrderList>
