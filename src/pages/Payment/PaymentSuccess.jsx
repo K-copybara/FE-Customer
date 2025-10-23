@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 import { display_large, body_large, title_large, title_medium } from '../../styles/font';
 import FullBottomButton from '../../components/common/FullBottomButton';
 import Send from '../../assets/icon/send-icon.svg?react';
-
-//import { postPaymentConfirm } from '../../api/order';
+import { postPaymentConfirm } from '../../api/order';
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
@@ -31,118 +30,117 @@ const PaymentSuccess = () => {
   }, [paymentKey, orderId, amount]);
 
   //order api 사용 버전(결제승인)
-  // const confirmPayment = async (paymentKey, orderId, amount) => {
-  //   try {
-  //     const requestData = {
-  //       paymentKey,
-  //       orderId,
-  //       amount: Number(amount),
-  //     };
-
-  //     console.log('결제 승인 요청:', requestData);
-
-  //     //axios client 사용
-  //     const result = await postPaymentConfirm(requestData);
-
-  //     console.log('✅ 결제 승인 완료!', result);
-
-  //     // 완료된 주문 정보 생성
-  //     const completedOrderData = {
-  //       paymentKey,
-  //       orderId,
-  //       amount: Number(amount),
-  //       paymentStatus: 'completed',
-  //       paymentData: result,
-  //       completedAt: new Date().toISOString(),
-  //     };
-
-  //     setOrderInfo(completedOrderData);
-  //     localStorage.removeItem('pendingOrder');
-
-  //   } catch (error) {
-  //     console.error('❌ 결제 승인 실패:', error);
-      
-  //         console.log('🔴 error.response:', error.response);
-  //   console.log('🔴 error.response.data:', error.response?.data);
-  //   console.log('🔴 error.response.status:', error.response?.status);
-  //   console.log('🔴 error.message:', error.message);
-    
-  //   const errorMessage = 
-  //     error.response?.data?.message || 
-  //     error.response?.data?.error || 
-  //     error.response?.data?.code ||
-  //     error.message || 
-  //     '결제 승인 중 오류가 발생했습니다.';
-      
-  //     setError(errorMessage);
-  //   } finally {
-  //     setIsProcessing(false);
-  //   }
-  // };
-
-
-  // https 사용 버전(결제승인)
   const confirmPayment = async (paymentKey, orderId, amount) => {
     try {
       const requestData = {
-          paymentKey,
-          orderId,
-          amount: Number(amount),
-        };
+        paymentKey,
+        orderId,
+        amount: Number(amount),
+      };
 
       console.log('결제 승인 요청:', requestData);
 
-      //localStorage에서 장바구니 정보 가져오기
-      const pendingCart = localStorage.getItem('pendingCart');
-      const cartInfo = pendingCart ? JSON.parse(pendingCart) : null;
+      //axios client 사용
+      const result = await postPaymentConfirm(requestData);
 
-      // paymentKey, orderId, amount 보내기, 결제승인 api 호출
-      const response = await fetch(
-        'https://hhatv6dqxr.apigw.ntruss.com/payment/toss-payment/v1/payments/confirm',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(requestData),
-        }
-      );
+      console.log('✅ 결제 승인 완료!', result);
 
-      const result = await response.json();
-      console.log('백엔드 응답:', result);
+      // 완료된 주문 정보 생성
+      const completedOrderData = {
+        paymentKey,
+        orderId,
+        amount: Number(amount),
+        paymentStatus: 'completed',
+        paymentData: result,
+        completedAt: new Date().toISOString(),
+      };
 
-      if (response.ok) {
-        console.log('✅ 결제 승인 완료!', result);
+      setOrderInfo(completedOrderData);
+      localStorage.removeItem('pendingOrder');
 
-        // 완료된 주문 정보 생성
-        const completedOrderData = {
-          paymentKey,
-          orderId,
-          amount: Number(amount),
-          paymentStatus: 'completed',
-          paymentData: result,
-          completedAt: new Date().toISOString(),
-          items: cartInfo?.items || [], 
-          request: cartInfo?.request || '', 
-        };
-
-        setOrderInfo(completedOrderData);
-
-        // localStorage 정리 (필요시)
-        localStorage.removeItem('pendingCart');
-      } else {
-        // 에러 응답 처리
-        console.error('❌ 결제 승인 실패:', result);
-        const errorMessage = result.message || result.error || '결제 승인 중 오류가 발생했습니다.';
-        setError(errorMessage);
-      }
     } catch (error) {
-      console.error('결제 승인 API 호출 오류:', error);
-      setError('서버와 통신 중 오류가 발생했습니다. 다시 시도해주세요.');
+      console.error('❌ 결제 승인 실패:', error);
+      
+          console.log('🔴 error.response:', error.response);
+    console.log('🔴 error.response.data:', error.response?.data);
+    console.log('🔴 error.response.status:', error.response?.status);
+    console.log('🔴 error.message:', error.message);
+    
+    const errorMessage = 
+      error.response?.data?.message || 
+      error.response?.data?.error || 
+      error.response?.data?.code ||
+      error.message || 
+      '결제 승인 중 오류가 발생했습니다.';
+      
+      setError(errorMessage);
     } finally {
       setIsProcessing(false);
     }
   };
+
+
+  // // https 사용 버전(결제승인)
+  // const confirmPayment = async (paymentKey, orderId, amount) => {
+  //   try {
+  //     const requestData = {
+  //         paymentKey,
+  //         orderId,
+  //         amount: Number(amount),
+  //       };
+
+  //     console.log('결제 승인 요청:', requestData);
+
+  //     //localStorage에서 장바구니 정보 가져오기
+  //     const pendingCart = localStorage.getItem('pendingCart');
+  //     const cartInfo = pendingCart ? JSON.parse(pendingCart) : null;
+
+  //     // paymentKey, orderId, amount 보내기, 결제승인 api 호출
+  //     const response = await client.post(
+  //       '/payment/toss-payment/v1/payments/confirm',
+  //       requestData,
+  //       {
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //       }
+  //     );
+
+  //     const result = await response.json();
+  //     console.log('백엔드 응답:', result);
+
+  //     if (response.ok) {
+  //       console.log('✅ 결제 승인 완료!', result);
+
+  //       // 완료된 주문 정보 생성
+  //       const completedOrderData = {
+  //         paymentKey,
+  //         orderId,
+  //         amount: Number(amount),
+  //         paymentStatus: 'completed',
+  //         paymentData: result,
+  //         completedAt: new Date().toISOString(),
+  //         items: cartInfo?.items || [], 
+  //         request: cartInfo?.request || '', 
+  //       };
+
+  //       setOrderInfo(completedOrderData);
+
+  //       // localStorage 정리 (필요시)
+  //       localStorage.removeItem('pendingCart');
+  //     } else {
+  //       // 에러 응답 처리
+  //       console.error('❌ 결제 승인 실패:', result);
+  //       const errorMessage = result.message || result.error || '결제 승인 중 오류가 발생했습니다.';
+  //       setError(errorMessage);
+  //     }
+  //   } catch (error) {
+  //     console.error('결제 승인 API 호출 오류:', error);
+  //     setError('서버와 통신 중 오류가 발생했습니다. 다시 시도해주세요.');
+  //   } finally {
+  //     setIsProcessing(false);
+  //   }
+  // };
 
   const handleGoHome = () => {
     navigate('/');
@@ -201,7 +199,7 @@ const PaymentSuccess = () => {
         </SendIcon>
 
         <Title>결제가 완료되었습니다!</Title>
-        <OrderNumber>주문번호 {orderId}</OrderNumber>
+        <OrderNumber>주문번호 {orderId.substr(0, 1)}</OrderNumber>
 
         <OrderSummary>
           {/* 주문 아이템이 있는 경우 표시 */}
