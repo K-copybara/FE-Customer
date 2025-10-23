@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
-import { display_large, body_large, title_large, title_medium } from '../../styles/font';
+import {
+  display_large,
+  body_large,
+  title_large,
+  title_medium,
+} from '../../styles/font';
 import FullBottomButton from '../../components/common/FullBottomButton';
 import Send from '../../assets/icon/send-icon.svg?react';
 import { postPaymentConfirm } from '../../api/order';
@@ -217,9 +222,7 @@ const PaymentSuccess = () => {
           {/* 총 금액 */}
           <TotalRow>
             <SummaryLabel>총 주문 금액</SummaryLabel>
-            <SummaryValue>
-              {Number(amount).toLocaleString()}원
-            </SummaryValue>
+            <SummaryValue>{Number(amount).toLocaleString()}원</SummaryValue>
           </TotalRow>
 
           {/* 요청사항이 있는 경우 표시 */}

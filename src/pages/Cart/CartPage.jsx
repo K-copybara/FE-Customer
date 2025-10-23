@@ -28,8 +28,6 @@ const CartPage = () => {
   const [requestText, setRequestText] = useState('');
   const [tempRequestText, setTempRequestText] = useState('');
 
-
-
   useEffect(() => {
     const fetchCart = async () => {
       try {
@@ -110,8 +108,8 @@ const CartPage = () => {
 
   //작성된 요청사항 삭제
   const handleDeleteRequest = (e) => {
-  e.stopPropagation(); //모달이 열리는 것 방지
-  setRequestText('');
+    e.stopPropagation(); //모달이 열리는 것 방지
+    setRequestText('');
   };
 
   //요청사항이랑 메뉴 아이템  기준으로 분리
@@ -197,7 +195,7 @@ const CartPage = () => {
         if (!hasMenuItems && hasRequestItems && !hasRequestText) {
           console.log('- 요청사항 아이템만'); //성공
         } else if (!hasMenuItems && !hasRequestItems && hasRequestText) {
-          console.log('- 요청사항 텍스트만'); 
+          console.log('- 요청사항 텍스트만');
         } else if (!hasMenuItems && hasRequestItems && hasRequestText) {
           console.log('- 요청사항 아이템 + 요청사항 텍스트'); //성공
         }
@@ -229,21 +227,24 @@ const CartPage = () => {
   const handlePayment = async () => {
     try {
       console.log('결제 준비 API 호출 시작');
-      
+
       // 결제 전 장바구니 정보 저장
-      localStorage.setItem('pendingCart', JSON.stringify({
-        items: cartData.items,
-        request: requestText,
-        totalPrice: cartData.totalPrice,
-      }));
+      localStorage.setItem(
+        'pendingCart',
+        JSON.stringify({
+          items: cartData.items,
+          request: requestText,
+          totalPrice: cartData.totalPrice,
+        }),
+      );
 
       const trimmedRequestText = requestText.trim();
 
       //결제준비로 보낼 데이터
       const prepareRequestBody = {
-        cartId: cartData.cartId, 
-        storeId: storeId,        
-        tableId: tableId,       
+        cartId: cartData.cartId,
+        storeId: storeId,
+        tableId: tableId,
         ...(trimmedRequestText && { requestNote: trimmedRequestText }),
       };
 
@@ -253,8 +254,16 @@ const CartPage = () => {
       const prepareData = await postPaymentPrepare(prepareRequestBody);
 
       //받은  clientKey, orderId, customerKey
-      const { clientKey, orderId, customerKey: returnedCustomerKey } = prepareData;
-      console.log('결제 준비 완료:', { clientKey, orderId, customerKey:returnedCustomerKey });
+      const {
+        clientKey,
+        orderId,
+        customerKey: returnedCustomerKey,
+      } = prepareData;
+      console.log('결제 준비 완료:', {
+        clientKey,
+        orderId,
+        customerKey: returnedCustomerKey,
+      });
 
       //localStorage.setItem('pendingOrder', JSON.stringify(orderData));
 
@@ -265,7 +274,9 @@ const CartPage = () => {
       }
 
       const tossPayments = window.TossPayments(clientKey);
-      const payment = tossPayments.payment({ customerKey: returnedCustomerKey });
+      const payment = tossPayments.payment({
+        customerKey: returnedCustomerKey,
+      });
 
       await payment.requestPayment({
         method: 'CARD',
@@ -299,16 +310,16 @@ const CartPage = () => {
   const hasRequestText = requestText.trim().length > 0;
   const hasRequestItems = requestItems.length > 0;
   const hasMenuItems = menuItems.length > 0;
-  
+
   // 버튼을 표시할 조건
   const showOrderButton = hasMenuItems || hasRequestItems || hasRequestText;
 
   // 버튼 텍스트 결정
   const buttonText = hasMenuItems
-  ? `${cartData.totalPrice.toLocaleString()}원 결제하기`
-  : hasRequestItems || hasRequestText
-  ? '요청사항 전달하기'
-  : '';
+    ? `${cartData.totalPrice.toLocaleString()}원 결제하기`
+    : hasRequestItems || hasRequestText
+      ? '요청사항 전달하기'
+      : '';
 
   return (
     <Container>
@@ -321,39 +332,35 @@ const CartPage = () => {
               <TableInfo>{tableId}번 테이블</TableInfo>
             </StoreInfo>
 
-                {/*장바구니가 비어있어도 UI 표시 */}
-                {cartData.items.length === 0 ? (
-                  <EmptyCartContent>
-                    <EmptyMessage>텅❗</EmptyMessage>
-                    <EmptyDescription>
-                      메뉴를 추가하거나 요청사항을 입력해주세요
-                    </EmptyDescription>
-                  </EmptyCartContent>
-                ) : (
-                  <>
-                    <OrderCount>총 {cartData.items.length}건</OrderCount>
+            {/*장바구니가 비어있어도 UI 표시 */}
+            {cartData.items.length === 0 ? (
+              <EmptyCartContent>
+                <EmptyMessage>텅</EmptyMessage>
+                <EmptyDescription>메뉴를 추가해주세요</EmptyDescription>
+              </EmptyCartContent>
+            ) : (
+              <>
+                <OrderCount>총 {cartData.items.length}건</OrderCount>
 
-                    <CartItems>
-                      {cartData.items.map((item) => (
-                        <CartItem
-                          key={`cart-${item.menuId}`}
-                          item={item}
-                          onChangeAmount={handleQuantityChange}
-                          onRemove={handleRemoveItem}
-                        />
-                      ))}
-                    </CartItems>
-                  </>
-                )}
+                <CartItems>
+                  {cartData.items.map((item) => (
+                    <CartItem
+                      key={`cart-${item.menuId}`}
+                      item={item}
+                      onChangeAmount={handleQuantityChange}
+                      onRemove={handleRemoveItem}
+                    />
+                  ))}
+                </CartItems>
 
                 <RequestSection>
                   {requestText ? (
                     <RequestWithText onClick={handleRequestEdit}>
-                        <RequestHeader>
-                          <RequestLabel>요청사항</RequestLabel>
-                          <DeleteIcon onClick={handleDeleteRequest} />
-                        </RequestHeader>
-                        <RequestPreview>{requestText}</RequestPreview>
+                      <RequestHeader>
+                        <RequestLabel>요청사항</RequestLabel>
+                        <DeleteIcon onClick={handleDeleteRequest} />
+                      </RequestHeader>
+                      <RequestPreview>{requestText}</RequestPreview>
                     </RequestWithText>
                   ) : (
                     <RequestButton onClick={() => setShowRequestModal(true)}>
@@ -361,6 +368,8 @@ const CartPage = () => {
                     </RequestButton>
                   )}
                 </RequestSection>
+              </>
+            )}
           </Content>
 
           {/* 결제하기 or 요청사항 전달하기 */}
@@ -375,8 +384,8 @@ const CartPage = () => {
       )}
       {/* 요청사항 모달 */}
       {showRequestModal && (
-        <Modal onClick={handleCloseModal}> 
-          <ModalContent onClick={(e) => e.stopPropagation()}> 
+        <Modal onClick={handleCloseModal}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
             <ModalHeader>
               <ModalTitle>요청사항</ModalTitle>
             </ModalHeader>
@@ -483,7 +492,7 @@ const CartItems = styled.div`
 const RequestSection = styled.div`
   padding: 0.5rem;
   display: flex;
-
+  justify-content: center;
 `;
 
 const RequestButton = styled.button`
@@ -510,7 +519,7 @@ const RequestWithText = styled.button`
   cursor: pointer;
   text-align: left;
   gap: 1.25rem;
-    display: flex;
+  display: flex;
   flex-direction: column;
   gap: 0.75rem;
 `;
@@ -518,7 +527,6 @@ const RequestWithText = styled.button`
 const RequestLabel = styled.div`
   ${body_large}
   color: var(--gray500);
-
 `;
 
 const RequestContent = styled.div`
@@ -532,7 +540,7 @@ const RequestPreview = styled.div`
   color: var(--black);
 `;
 
-const RequestHeader= styled.div`
+const RequestHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;

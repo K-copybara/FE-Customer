@@ -18,6 +18,7 @@ import { formatDateTime } from '../../utils/formatTime';
 const STATUS_MAP = {
   PENDING: '주문 접수',
   COMPLETED: '주문 완료',
+  CANCELED: '주문 취소',
 };
 
 const HistoryPage = () => {
@@ -81,14 +82,14 @@ const HistoryPage = () => {
                 <OrderCard key={order.orderId}>
                   <OrderHeader>
                     <OrderStatus>{STATUS_MAP[order.status]}</OrderStatus>
-                    {/* 나중에 날짜 포맷팅 함수 적용 */}
                     <OrderTime>{formatDateTime(order.createdAt)}</OrderTime>
                   </OrderHeader>
 
                   <OrderItemInfo>
                     <OrderNumberText>
-                      주문 번호 {order.orderId.substr(0, 1)}
+                      주문번호 {order.orderId.split('-')[0]}
                     </OrderNumberText>
+                    <Line />
                     {order.items.map((item) => (
                       <OrderItem key={item.menuId}>
                         <ItemName>
@@ -104,7 +105,7 @@ const HistoryPage = () => {
                       {order.totalPrice.toLocaleString()}원
                     </TotalAmount>
                   </OrderItemInfo>
-
+                  <Line />
                   <RequestSection>
                     <RequestLabel>요청사항</RequestLabel>
                     <RequestContent>
@@ -112,7 +113,7 @@ const HistoryPage = () => {
                     </RequestContent>
                   </RequestSection>
 
-                  {order.status === 'COMPLETED' && (
+                  {order.status === 'COMPLETED' && !order.reviewed && (
                     <ReviewButton onClick={() => handleReviewClick(order)}>
                       <ReviewIcon />
                       리뷰 쓰기
@@ -178,6 +179,7 @@ const TotalOrderInfo = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.56rem;
+  box-shadow: 0 4px 8px 0 #e8ecff;
 `;
 
 const TotalOrderText = styled.div`
@@ -215,10 +217,17 @@ const OrderCard = styled.div`
   background: var(--background);
   border-radius: 0.625rem;
   padding: 1.5rem 1.25rem;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 10px 0 rgba(214, 214, 214, 0.4);
   border: 1px solid var(--gray300);
   display: flex;
   flex-direction: column;
+`;
+
+const Line = styled.div`
+  width: 100%;
+  height: 0.06rem;
+  background-color: var(--gray300);
+  margin: 1.25rem 0;
 `;
 
 const OrderHeader = styled.div`
@@ -241,15 +250,12 @@ const OrderTime = styled.div`
 
 const OrderItemInfo = styled.div`
   padding-top: 0.5rem;
-  margin-bottom: 1.25rem;
   display: flex;
   flex-direction: column;
 `;
 
 const OrderNumberText = styled.div`
   ${title_large}
-  border-bottom: 1px solid var(--gray300);
-  padding-bottom: 1.25rem;
   color: var(--black);
 `;
 
@@ -273,12 +279,11 @@ const ItemPrice = styled.div`
 
 const TotalAmount = styled.div`
   ${title_medium}
-  padding: 1rem 0 1.25rem 0;
+  padding-top: 1rem;
   color: var(--black);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid var(--gray300);
 `;
 
 const RequestSection = styled.div`
