@@ -199,7 +199,7 @@ const PaymentSuccess = () => {
         </SendIcon>
 
         <Title>결제가 완료되었습니다!</Title>
-        <OrderNumber>주문번호 {orderId.substr(0, 1)}</OrderNumber>
+        <OrderNumber>주문번호 {orderId.split('-')[0]}</OrderNumber>
 
         <OrderSummary>
           {/* 주문 아이템이 있는 경우 표시 */}
