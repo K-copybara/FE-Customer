@@ -97,7 +97,7 @@ const Container = styled.div`
 
   width: 100%;
   flex: 1;
-  padding: 1.5rem 1.25rem;
+  padding: 1.5rem 1.25rem 50px;
 
   overflow-y: scroll;
   &::-webkit-scrollbar {

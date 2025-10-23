@@ -6,7 +6,12 @@ export default function InputContainer({ message, setMessage, onClickButton }) {
   return (
     <Container>
       <InputText value={message} onChange={(e) => setMessage(e.target.value)} />
-      <ButtonWrapper onClick={onClickButton}>
+      <ButtonWrapper
+        onClick={(e) => {
+          e.preventDefault();
+          onClickButton();
+        }}
+      >
         <SEND_BUTTON />
       </ButtonWrapper>
     </Container>
@@ -25,6 +30,7 @@ const Container = styled.div`
 
   background-color: var(--white);
   box-shadow: 0 -4px 10px 0 rgba(130, 152, 255, 0.3);
+  z-index: 100;
 `;
 
 const InputText = styled.input`
