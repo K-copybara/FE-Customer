@@ -28,6 +28,7 @@ export const useUserStore = create(
           tableId: null,
           customerKey: null,
           expiresAt: null,
+          sessionId: null,
         });
       },
     })),

@@ -21,6 +21,7 @@ const EntryPage = () => {
         const tableId = Number(atob(tableParam));
 
         const res = await getCustomerKey(storeId, tableId);
+        clearUser();
         setUser(res);
 
         navigate('/', { replace: true });
