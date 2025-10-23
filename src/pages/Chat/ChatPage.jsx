@@ -57,7 +57,7 @@ const ChatPage = () => {
     //stomp 웹소켓 연결
     const SERVER_URL = import.meta.env.VITE_WEBSOCKET_URL;
     const stompClient = new Client({
-      webSocketFactory: () => new SockJS('/chatbot/ws/chat'),
+      webSocketFactory: () => new SockJS(SERVER_URL + '/ws/chat'),
       reconnectDelay: 5000,
       heartbeatIncoming: 10000,
       heartbeatOutgoing: 10000,
