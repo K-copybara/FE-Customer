@@ -456,8 +456,12 @@ const Container = styled.div`
 const Content = styled.div`
   flex: 1;
   padding: 0 1rem;
+  margin-bottom: 6rem;
   overflow-y: auto;
   overscroll-behavior: contain;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const StoreInfo = styled.div`
