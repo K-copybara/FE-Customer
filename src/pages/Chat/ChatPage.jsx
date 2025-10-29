@@ -8,6 +8,7 @@ import { getChatList, postChatSession } from '../../api/chat';
 import { useUserStore } from '../../store/useUserStore';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+import BottomSheet from '../../components/chat/BottomSheet';
 
 const startChat = {
   messageId: 0,
@@ -16,12 +17,21 @@ const startChat = {
   sentAt: new Date().toISOString(),
 };
 
+const examples = [
+  '가장 인기있는 메뉴가 무엇인가요?',
+  '안 매운 메뉴 추천해주세요.',
+  '반찬 좀 리필해주세요.',
+  '땅콩 알러지가 있는데, 땅콩이 안들어간 메뉴 있나요?',
+  '3명이서 먹을건데 어떻게 먹으면 좋을까요?',
+];
+
 const ChatPage = () => {
   const { storeId, tableId, customerKey, sessionId, setSessionId } =
     useUserStore();
   const [isLoading, setIsLoading] = useState(false);
   const [messageList, setMessageList] = useState([]); // 메시지 목록
   const [message, setMessage] = useState(''); // 내가 보낼 메시지
+  const [isExpanded, setIsExpanded] = useState(false); //예시 질문 바텀시트 활성화
   const stompRef = useRef();
   const bottomRef = useRef();
   const navigate = useNavigate();
@@ -55,9 +65,9 @@ const ChatPage = () => {
 
   useEffect(() => {
     //stomp 웹소켓 연결
-    const SERVER_URL = import.meta.env.VITE_WEBSOCKET_URL;
+    const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL;
     const stompClient = new Client({
-      webSocketFactory: () => new SockJS(SERVER_URL + '/chatbot/ws/chat'),
+      webSocketFactory: () => new SockJS(WEBSOCKET_URL),
       reconnectDelay: 5000,
       heartbeatIncoming: 10000,
       heartbeatOutgoing: 10000,
@@ -91,30 +101,31 @@ const ChatPage = () => {
     };
   }, [customerKey]);
 
-  const sendMessage = () => {
-    console.log(message);
-    if (stompRef.current && stompRef.current.connected && message.trim()) {
-      const messageData = {
-        customerKey,
-        role: 'CUSTOMER',
-        content: message,
-        sentAt: new Date().toISOString(),
-      };
+  const sendMessage = (faq) => {
+    const text = typeof faq === 'string' ? faq : message.trim();
+    if (!text) return;
+    if (!(stompRef.current && stompRef.current.connected)) return;
 
-      setMessageList((prev) => [...prev, messageData]);
-      const payload = JSON.stringify(messageData);
+    const messageData = {
+      customerKey,
+      role: 'CUSTOMER',
+      content: text,
+      sentAt: new Date().toISOString(),
+    };
 
-      try {
-        stompRef.current.publish({
-          destination: '/api/customer/chat.send',
-          body: payload,
-        });
-        setMessage('');
-        setIsLoading(true);
-      } catch (err) {
-        alert('메세지 전송 실패');
-        console.error(err);
-      }
+    setMessageList((prev) => [...prev, messageData]);
+    const payload = JSON.stringify(messageData);
+
+    try {
+      stompRef.current.publish({
+        destination: '/api/customer/chat.send',
+        body: payload,
+      });
+      setMessage('');
+      setIsLoading(true);
+    } catch (err) {
+      alert('메세지 전송 실패');
+      console.error(err);
     }
   };
 
@@ -122,13 +133,24 @@ const ChatPage = () => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const toggleSheet = (event) => {
+    event.stopPropagation();
+    setIsExpanded(!isExpanded);
+  };
+
   return (
-    <Container>
+    <Container onClick={() => setIsExpanded(false)}>
       <PageHeader title={'Semini'} onClick={() => navigate(-1)} />
       <ChatContainer
         messageList={messageList}
         bottomRef={bottomRef}
         isLoading={isLoading}
+      />
+      <BottomSheet
+        items={examples}
+        isExpanded={isExpanded}
+        toggleSheet={toggleSheet}
+        sendMessage={sendMessage}
       />
       <InputContainer
         message={message}
@@ -142,6 +164,7 @@ const ChatPage = () => {
 export default ChatPage;
 
 const Container = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
   height: 100vh;
