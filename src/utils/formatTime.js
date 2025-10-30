@@ -14,10 +14,10 @@ export const formatDate = (dateString) => {
 };
 
 export const extractTime = (datetime) => {
-  return dayjs.utc(datetime).tz('Asia/Seoul').format('HH:mm');
+  return dayjs(datetime).format('HH:mm');
 };
 
 export const formatDateTime = (isoString) => {
   if (!isoString) return '';
-  return dayjs.utc(isoString).tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
+  return dayjs(isoString).format('YYYY-MM-DD HH:mm:ss');
 };
