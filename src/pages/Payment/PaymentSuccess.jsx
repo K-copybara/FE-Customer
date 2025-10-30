@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams, useNavigate} from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import {
   display_large,
@@ -62,28 +62,26 @@ const PaymentSuccess = () => {
 
       setOrderInfo(completedOrderData);
       localStorage.removeItem('pendingOrder');
-
     } catch (error) {
       console.error('❌ 결제 승인 실패:', error);
-      
-          console.log('🔴 error.response:', error.response);
-    console.log('🔴 error.response.data:', error.response?.data);
-    console.log('🔴 error.response.status:', error.response?.status);
-    console.log('🔴 error.message:', error.message);
-    
-    const errorMessage = 
-      error.response?.data?.message || 
-      error.response?.data?.error || 
-      error.response?.data?.code ||
-      error.message || 
-      '결제 승인 중 오류가 발생했습니다.';
-      
+
+      console.log('🔴 error.response:', error.response);
+      console.log('🔴 error.response.data:', error.response?.data);
+      console.log('🔴 error.response.status:', error.response?.status);
+      console.log('🔴 error.message:', error.message);
+
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        error.response?.data?.code ||
+        error.message ||
+        '결제 승인 중 오류가 발생했습니다.';
+
       setError(errorMessage);
     } finally {
       setIsProcessing(false);
     }
   };
-
 
   // // https 사용 버전(결제승인)
   // const confirmPayment = async (paymentKey, orderId, amount) => {
@@ -125,8 +123,8 @@ const PaymentSuccess = () => {
   //         paymentStatus: 'completed',
   //         paymentData: result,
   //         completedAt: new Date().toISOString(),
-  //         items: cartInfo?.items || [], 
-  //         request: cartInfo?.request || '', 
+  //         items: cartInfo?.items || [],
+  //         request: cartInfo?.request || '',
   //       };
 
   //       setOrderInfo(completedOrderData);
@@ -252,7 +250,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-height: 100vh;
+  min-height: 100dvh;
   background: var(--background);
   position: relative;
 `;

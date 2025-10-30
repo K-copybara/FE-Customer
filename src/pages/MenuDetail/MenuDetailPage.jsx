@@ -11,8 +11,6 @@ import { useUserStore } from '../../store/useUserStore';
 import { getMenuDetail } from '../../api/store';
 import { postCart } from '../../api/cart';
 
-
-
 const MenuDetailPage = () => {
   const { menuId } = useParams();
   const navigate = useNavigate();
@@ -118,7 +116,7 @@ const Container = styled.div`
   flex-direction: column;
   background: var(--background);
   position: relative;
-  height: 100vh;
+  height: 100dvh;
   flex: 1;
 `;
 
