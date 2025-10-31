@@ -111,7 +111,8 @@ const Container = styled.div`
 `;
 
 const Content = styled.div`
-  padding: 1rem;
+  padding: 0 1rem;
+  margin-bottom: 6rem;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 `;
