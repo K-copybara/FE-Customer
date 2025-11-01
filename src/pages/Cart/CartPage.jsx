@@ -228,16 +228,6 @@ const CartPage = () => {
     try {
       console.log('결제 준비 API 호출 시작');
 
-      // 결제 전 장바구니 정보 저장
-      localStorage.setItem(
-        'pendingCart',
-        JSON.stringify({
-          items: cartData.items,
-          request: requestText,
-          totalPrice: cartData.totalPrice,
-        }),
-      );
-
       const trimmedRequestText = requestText.trim();
 
       //결제준비로 보낼 데이터
@@ -250,22 +240,25 @@ const CartPage = () => {
 
       console.log('결제 준비 요청:', prepareRequestBody);
 
-      //결제준비 api 호출
-      const prepareData = await postPaymentPrepare(prepareRequestBody);
+      let pendingCart = JSON.parse(sessionStorage.getItem('pendingCart'));
+      if (!pendingCart) {
+        //결제준비 api 호출
+        const prepareData = await postPaymentPrepare(prepareRequestBody);
+        sessionStorage.setItem('pendingCart', JSON.stringify(prepareData));
+        pendingCart = prepareData;
+      }
 
       //받은  clientKey, orderId, customerKey
       const {
         clientKey,
         orderId,
         customerKey: returnedCustomerKey,
-      } = prepareData;
+      } = pendingCart;
       console.log('결제 준비 완료:', {
         clientKey,
         orderId,
         customerKey: returnedCustomerKey,
       });
-
-      //localStorage.setItem('pendingOrder', JSON.stringify(orderData));
 
       // 토스 결제창 호출
       if (typeof window.TossPayments === 'undefined') {
