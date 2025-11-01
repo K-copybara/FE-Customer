@@ -16,6 +16,7 @@ const PaymentFail = () => {
   useEffect(() => {
     console.log('결제 실패 정보:', { code, message, orderId });
 
+    window.sessionStorage.removeItem('pendingCart');
     setErrorInfo({
       code: code || '알 수 없음',
       message: message
