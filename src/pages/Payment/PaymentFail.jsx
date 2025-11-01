@@ -14,7 +14,7 @@ const PaymentFail = () => {
   const orderId = searchParams.get('orderId');
 
   useEffect(() => {
-    console.log('결제 실패 정보:', { code, message, orderId });
+    //console.log('결제 실패 정보:', { code, message, orderId });
 
     window.sessionStorage.removeItem('pendingCart');
     setErrorInfo({

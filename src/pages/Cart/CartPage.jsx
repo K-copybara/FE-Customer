@@ -149,11 +149,11 @@ const CartPage = () => {
       }));
     }
 
-    console.log('요청사항 전송:', requestBody);
+    //console.log('요청사항 전송:', requestBody);
 
     try {
       const result = await postRequest(requestBody);
-      console.log('요청사항 전송 성공:', result);
+      //console.log('요청사항 전송 성공:', result);
       return result;
     } catch (error) {
       console.error('요청사항 전송 실패:', error);
@@ -167,41 +167,41 @@ const CartPage = () => {
     const hasRequestItems = requestItems.length > 0;
     const hasMenuItems = menuItems.length > 0;
 
-    console.log('주문 처리 시작:', {
-      requestItems: requestItems.length,
-      menuItems: menuItems.length,
-      hasRequestText,
-      결제여부: hasMenuItems ? '결제진행' : '바로완료',
-    });
+    // console.log('주문 처리 시작:', {
+    //   requestItems: requestItems.length,
+    //   menuItems: menuItems.length,
+    //   hasRequestText,
+    //   결제여부: hasMenuItems ? '결제진행' : '바로완료',
+    // });
 
     try {
       //메뉴 아이템이 포함된 모든 경우(결제)
       if (hasMenuItems) {
-        if (hasMenuItems && !hasRequestItems && !hasRequestText) {
-          console.log('- 메뉴만');
-        } else if (hasMenuItems && !hasRequestItems && hasRequestText) {
-          console.log('- 메뉴 + 요청사항 메모');
-        } else if (hasMenuItems && hasRequestItems && !hasRequestText) {
-          console.log('- 메뉴 + 요청사항 아이템');
-        } else if (hasMenuItems && hasRequestItems && hasRequestText) {
-          console.log('- 메뉴 + 요청사항 메모 + 요청사항 아이템');
-        }
+        // if (hasMenuItems && !hasRequestItems && !hasRequestText) {
+        //   console.log('- 메뉴만');
+        // } else if (hasMenuItems && !hasRequestItems && hasRequestText) {
+        //   console.log('- 메뉴 + 요청사항 메모');
+        // } else if (hasMenuItems && hasRequestItems && !hasRequestText) {
+        //   console.log('- 메뉴 + 요청사항 아이템');
+        // } else if (hasMenuItems && hasRequestItems && hasRequestText) {
+        //   console.log('- 메뉴 + 요청사항 메모 + 요청사항 아이템');
+        // }
         await handlePayment();
         return;
       }
 
       // 요청사항만 있는 경우 (결제 없음)
       if (!hasMenuItems && (hasRequestItems || hasRequestText)) {
-        if (!hasMenuItems && hasRequestItems && !hasRequestText) {
-          console.log('- 요청사항 아이템만'); //성공
-        } else if (!hasMenuItems && !hasRequestItems && hasRequestText) {
-          console.log('- 요청사항 텍스트만');
-        } else if (!hasMenuItems && hasRequestItems && hasRequestText) {
-          console.log('- 요청사항 아이템 + 요청사항 텍스트'); //성공
-        }
+        // if (!hasMenuItems && hasRequestItems && !hasRequestText) {
+        //   console.log('- 요청사항 아이템만'); //성공
+        // } else if (!hasMenuItems && !hasRequestItems && hasRequestText) {
+        //   console.log('- 요청사항 텍스트만');
+        // } else if (!hasMenuItems && hasRequestItems && hasRequestText) {
+        //   console.log('- 요청사항 아이템 + 요청사항 텍스트'); //성공
+        // }
 
         const response = await sendRequestOnly(requestItems, requestText);
-        console.log('요청사항 전송 결과:', response);
+        //console.log('요청사항 전송 결과:', response);
 
         navigate('/ordercomplete', {
           state: {
@@ -226,7 +226,7 @@ const CartPage = () => {
   // 결제창 방식으로 결제 요청
   const handlePayment = async () => {
     try {
-      console.log('결제 준비 API 호출 시작');
+      //console.log('결제 준비 API 호출 시작');
 
       const trimmedRequestText = requestText.trim();
 
@@ -238,7 +238,7 @@ const CartPage = () => {
         ...(trimmedRequestText && { requestNote: trimmedRequestText }),
       };
 
-      console.log('결제 준비 요청:', prepareRequestBody);
+      //console.log('결제 준비 요청:', prepareRequestBody);
 
       let pendingCart = JSON.parse(sessionStorage.getItem('pendingCart'));
       if (!pendingCart) {
@@ -254,11 +254,11 @@ const CartPage = () => {
         orderId,
         customerKey: returnedCustomerKey,
       } = pendingCart;
-      console.log('결제 준비 완료:', {
-        clientKey,
-        orderId,
-        customerKey: returnedCustomerKey,
-      });
+      // console.log('결제 준비 완료:', {
+      //   clientKey,
+      //   orderId,
+      //   customerKey: returnedCustomerKey,
+      // });
 
       // 토스 결제창 호출
       if (typeof window.TossPayments === 'undefined') {
@@ -291,7 +291,7 @@ const CartPage = () => {
     } catch (error) {
       console.error('결제 요청 실패:', error);
       if (error.code === 'USER_CANCEL') {
-        console.log('사용자가 결제를 취소했습니다.');
+        // console.log('사용자가 결제를 취소했습니다.');
       } else {
         alert('결제 요청 중 오류가 발생했습니다: ' + error.message);
       }

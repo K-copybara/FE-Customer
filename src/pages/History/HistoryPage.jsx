@@ -45,7 +45,7 @@ const HistoryPage = () => {
   }, [customerKey]);
 
   const handleReviewClick = (order) => {
-    console.log('리뷰 쓰기 버튼 클릭됨. 주문 정보:', order);
+    //console.log('리뷰 쓰기 버튼 클릭됨. 주문 정보:', order);
     navigate('/review', { state: order });
   };
 
