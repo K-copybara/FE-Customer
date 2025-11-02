@@ -18,7 +18,7 @@ const OrderCompletePage = () => {
   // CartPage에서 전달된 주문 데이터 받기
   const orderData = location.state;
 
-  console.log('받은 주문 데이터:', orderData);
+  //console.log('받은 주문 데이터:', orderData);
 
   // 데이터가 없으면 에러 페이지 또는 메인으로 리다이렉트
   if (!orderData) {

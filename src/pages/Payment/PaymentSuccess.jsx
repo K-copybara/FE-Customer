@@ -24,7 +24,7 @@ const PaymentSuccess = () => {
   const amount = searchParams.get('amount');
 
   useEffect(() => {
-    console.log('PaymentSuccess 페이지 로드:', { paymentKey, orderId, amount });
+    //console.log('PaymentSuccess 페이지 로드:', { paymentKey, orderId, amount });
 
     window.sessionStorage.removeItem('pendingCart');
     if (paymentKey && orderId && amount) {
@@ -44,12 +44,12 @@ const PaymentSuccess = () => {
         amount: Number(amount),
       };
 
-      console.log('결제 승인 요청:', requestData);
+      //console.log('결제 승인 요청:', requestData);
 
       //axios client 사용
       const result = await postPaymentConfirm(requestData);
 
-      console.log('✅ 결제 승인 완료!', result);
+      //console.log('✅ 결제 승인 완료!', result);
 
       // 완료된 주문 정보 생성
       const completedOrderData = {
@@ -65,10 +65,10 @@ const PaymentSuccess = () => {
     } catch (error) {
       console.error('❌ 결제 승인 실패:', error);
 
-      console.log('🔴 error.response:', error.response);
-      console.log('🔴 error.response.data:', error.response?.data);
-      console.log('🔴 error.response.status:', error.response?.status);
-      console.log('🔴 error.message:', error.message);
+      //console.log('🔴 error.response:', error.response);
+      //console.log('🔴 error.response.data:', error.response?.data);
+      //console.log('🔴 error.response.status:', error.response?.status);
+      //console.log('🔴 error.message:', error.message);
 
       const errorMessage =
         error.response?.data?.message ||
